@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prosper Onam</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Prosper Onam</h1>
+        <nav>
+            <button id="homeBtn" class="nav-btn active">Home</button>
+            <button id="manageBtn" class="nav-btn">Manage Items</button>
+            <button id="projectionBtn" class="nav-btn">📺 Projection</button>
+        </nav>
+    </header>
+
+    <main id="mainContent">
+        <!-- Home Page Content -->
+        <div id="homePage" class="page active">
+            <div class="main-layout">
+                <!-- Left Half - Current Item -->
+                <div class="current-event-section">
+                    <h2>🎪 Current Item</h2>
+                    <div id="currentEventCard" class="event-card current">
+                        <div class="no-event">
+                            <p>No item currently running</p>
+                            <button id="startNextBtn" class="btn primary">Start Next Item</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Half - Upcoming Items -->
+                <div class="upcoming-events-section">
+                    <h2>📅 Upcoming Items</h2>
+                    <div id="upcomingEventsList" class="events-list">
+                        <div class="no-events">
+                            <p>No upcoming items scheduled</p>
+                            <button id="addEventBtn" class="btn secondary">Add Items</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Events Page -->
+        <div id="managePage" class="page">
+            <div class="manage-header">
+                <h2>🛠️ Manage Items</h2>
+                <button id="addNewEventBtn" class="btn primary">+ Add New Item</button>
+            </div>
+
+            <!-- Add/Edit Item Form -->
+            <div id="eventForm" class="event-form hidden">
+                <h3 id="formTitle">Add New Item</h3>
+                <form id="eventFormElement">
+                    <div class="form-group">
+                        <label for="itemType">Type:</label>
+                        <select id="itemType" required>
+                            <option value="event">🎭 Event</option>
+                            <option value="announcement">📢 Announcement</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemId">Item ID:</label>
+                        <input type="text" id="itemId" placeholder="e.g., EVENT001, ANN001" required>
+                        <small class="form-help">Enter a unique identifier for this item. Must be unique across all events and announcements.</small>
+                    </div>
+                    <div class="form-group event-field">
+                        <label for="eventName">Event Name:</label>
+                        <input type="text" id="eventName" required>
+                    </div>
+                    <div class="form-group event-field">
+                        <label for="participants">Participants (comma-separated):</label>
+                        <input type="text" id="participants" placeholder="John Doe, Jane Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group event-field">
+                        <label for="participantPhoto">Participant Photo:</label>
+                        <div class="photo-input-group">
+                            <input type="file" id="participantPhotoFile" accept="image/*" class="photo-file-input">
+                            <input type="text" id="participantPhoto" placeholder="Or enter photo URL or local path (e.g., images/photo.jpg)" pattern=".*">
+                        </div>
+                        <small class="form-help">Upload a local image file or enter a URL. Local files from the images/ folder can be referenced as "images/filename.jpg"</small>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn primary" id="saveItemBtn">Save Item</button>
+                        <button type="button" id="cancelFormBtn" class="btn secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Events List for Management -->
+            <div id="manageEventsList" class="manage-events-list">
+                <div class="no-events">
+                    <p>No events to manage</p>
+                </div>
+            </div>
+
+            <!-- Finished Events Section -->
+            <div class="finished-events-section">
+                <h3>✅ Finished Events</h3>
+                <div id="finishedEventsList" class="finished-events-list">
+                    <div class="no-events">
+                        <p>No finished events yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="data-service.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
