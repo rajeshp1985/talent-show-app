@@ -1,6 +1,10 @@
 {
   "version": 2,
-  "buildCommand": "npm install --registry=https://registry.npmjs.org/",
+  "build": {
+    "env": {
+      "NPM_CONFIG_REGISTRY": "https://registry.npmjs.org/"
+    }
+  },
   "functions": {
     "api/index.js": {
       "runtime": "@vercel/node@3.2.0"
