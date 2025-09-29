@@ -5,7 +5,7 @@
 
 class TalentShowDataService {
     constructor() {
-        this.apiBaseUrl = 'http://localhost:8001/api';
+        this.apiBaseUrl = '/api';
         this.useLocalStorage = false;
         this.initialized = false;
     }

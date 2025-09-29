@@ -1,33 +1,6 @@
 {
   "events": [],
-  "currentEvent": {
-    "id": "dss",
-    "type": "event",
-    "description": "sdfsd",
-    "name": "ds",
-    "participants": [
-      "sf"
-    ],
-    "photo": "images/1.jpeg"
-  },
-  "lastUpdated": "2025-09-27T23:00:44.119007",
-  "finishedEvents": [
-    {
-      "id": "cvbcvb",
-      "type": "announcement",
-      "description": "cvbcv",
-      "finishedAt": "2025-09-27T22:57:28.208974"
-    },
-    {
-      "id": "asdas",
-      "type": "event",
-      "description": "sadasd",
-      "name": "asdas",
-      "participants": [
-        "asdas"
-      ],
-      "photo": "https://imgur.com/gallery/those-arms-w0atsf3#/t/groupphoto",
-      "finishedAt": "2025-09-27T22:57:30.660757"
-    }
-  ]
+  "currentEvent": null,
+  "lastUpdated": "2025-09-29T02:16:19.500Z",
+  "finishedEvents": []
 }

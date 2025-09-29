@@ -546,7 +546,7 @@
             try {
                 console.log('Loading data from API...');
                 
-                const response = await fetch('http://localhost:8001/api/data');
+                const response = await fetch('/api/data');
                 if (!response.ok) {
                     throw new Error(`API responded with status: ${response.status}`);
                 }
