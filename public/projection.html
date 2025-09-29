@@ -576,21 +576,42 @@
                     const participants = currentEvent.participants || [];
                     const participantsText = participants.length > 0 ? participants.join(', ') : 'Unknown Performer';
                     
-                    // Fix image path handling
+                    // Enhanced image path handling with debugging
                     let imageSrc = getDefaultAvatar();
+                    let debugInfo = 'Using default avatar';
+                    
                     if (currentEvent.photo) {
-                        // Handle different image path formats
                         let photoPath = currentEvent.photo.trim();
+                        console.log('Original photo path:', photoPath);
                         
-                        // If it's a relative path (like "images/photo.jpg"), make sure it's properly formatted
-                        if (photoPath && !photoPath.startsWith('http') && !photoPath.startsWith('data:') && !photoPath.startsWith('/')) {
-                            // Add leading slash for relative paths
-                            photoPath = '/' + photoPath;
+                        if (photoPath) {
+                            // Handle different image path formats
+                            if (photoPath.startsWith('http') || photoPath.startsWith('https')) {
+                                // Absolute URL - use as is
+                                imageSrc = photoPath;
+                                debugInfo = `Using absolute URL: ${photoPath}`;
+                            } else if (photoPath.startsWith('data:')) {
+                                // Data URL - use as is
+                                imageSrc = photoPath;
+                                debugInfo = `Using data URL`;
+                            } else if (photoPath.startsWith('/')) {
+                                // Already has leading slash
+                                imageSrc = photoPath;
+                                debugInfo = `Using absolute path: ${photoPath}`;
+                            } else {
+                                // Relative path - add leading slash
+                                imageSrc = '/' + photoPath;
+                                debugInfo = `Converted relative path "${photoPath}" to "${imageSrc}"`;
+                            }
                         }
-                        imageSrc = photoPath;
                     }
                     
-                    const photoHtml = `<img src="${imageSrc}" alt="${escapeHtml(participantsText)}" onerror="this.src='${getDefaultAvatar()}'; console.log('Image failed to load:', '${imageSrc}');">`;
+                    console.log('Image debug:', debugInfo);
+                    console.log('Final image src:', imageSrc);
+                    
+                    const photoHtml = `<img src="${imageSrc}" alt="${escapeHtml(participantsText)}" 
+                        onload="console.log('✅ Image loaded successfully:', '${imageSrc}')" 
+                        onerror="console.log('❌ Image failed to load:', '${imageSrc}'); this.src='${getDefaultAvatar()}';">`;
 
                     currentContainer.innerHTML = `
                         <div class="fade-in">

@@ -530,22 +530,85 @@ class TalentShowManager {
         const fileInput = document.getElementById('participantPhotoFile');
         const urlInput = document.getElementById('participantPhoto');
         
-        fileInput.addEventListener('change', (e) => {
+        console.log('🔧 Setting up file upload...', { fileInput, urlInput });
+        
+        if (!fileInput || !urlInput) {
+            console.error('❌ File upload elements not found!', { fileInput, urlInput });
+            return;
+        }
+        
+        // Remove any existing event listeners to prevent duplicates
+        const existingHandler = fileInput._uploadHandler;
+        if (existingHandler) {
+            fileInput.removeEventListener('change', existingHandler);
+        }
+        
+        // Create the handler function and store reference
+        const handleFileUpload = async (e) => {
             const file = e.target.files[0];
+            console.log('📁 File selected:', file ? file.name : 'none');
+            
             if (file) {
-                // For local development, we'll use a simple approach
-                // In production, you'd upload to a server or use FileReader for base64
-                const fileName = file.name;
-                urlInput.value = `images/${fileName}`;
-                urlInput.placeholder = `Selected: ${fileName}`;
-                
-                // Show a message about copying the file
                 const helpText = fileInput.parentElement.querySelector('.form-help');
-                helpText.innerHTML = `File selected: ${fileName}. Please copy this file to the images/ folder to use it.`;
-                helpText.style.color = '#5e72e4';
-                helpText.style.fontWeight = '500';
+                
+                try {
+                    // Show uploading status
+                    helpText.innerHTML = `Uploading ${file.name}...`;
+                    helpText.style.color = '#5e72e4';
+                    helpText.style.fontWeight = '500';
+                    
+                    console.log('🚀 Starting upload for:', file.name);
+                    
+                    // Create FormData for file upload
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    
+                    // Upload the file
+                    const response = await fetch('/api/upload-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    console.log('📡 Upload response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Upload failed: ${response.status} ${response.statusText} - ${errorText}`);
+                    }
+                    
+                    const result = await response.json();
+                    console.log('✅ Upload result:', result);
+                    
+                    // Update the URL input with the uploaded file path
+                    urlInput.value = result.path;
+                    urlInput.placeholder = `Uploaded: ${result.filename}`;
+                    
+                    // Show success message
+                    helpText.innerHTML = `✅ Image uploaded successfully: ${result.filename}`;
+                    helpText.style.color = '#28a745';
+                    helpText.style.fontWeight = '500';
+                    
+                    console.log('📸 Image upload successful:', result);
+                    
+                } catch (error) {
+                    console.error('❌ Upload error:', error);
+                    
+                    // Show error message
+                    helpText.innerHTML = `❌ Upload failed: ${error.message}`;
+                    helpText.style.color = '#dc3545';
+                    helpText.style.fontWeight = '500';
+                    
+                    // Clear the file input
+                    fileInput.value = '';
+                }
             }
-        });
+        };
+        
+        // Store reference and add the event listener
+        fileInput._uploadHandler = handleFileUpload;
+        fileInput.addEventListener('change', handleFileUpload);
+        
+        console.log('✅ File upload handler attached successfully');
     }
 
     hideItemForm() {

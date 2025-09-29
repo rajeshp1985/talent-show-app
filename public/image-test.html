@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Test - Talent Show</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .image-test {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .image-test img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #007bff;
+        }
+        .image-info {
+            flex: 1;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Test Tool</h1>
+    
+    <div class="test-section">
+        <h2>Available Images Test</h2>
+        <p>Testing images that should be available in the public/images/ directory:</p>
+        
+        <div class="image-test">
+            <img id="img1" src="/images/1.jpeg" alt="Test Image 1" 
+                 onload="updateStatus('status1', true, '/images/1.jpeg')" 
+                 onerror="updateStatus('status1', false, '/images/1.jpeg')">
+            <div class="image-info">
+                <strong>1.jpeg</strong><br>
+                Path: /images/1.jpeg<br>
+                <span id="status1" class="status">Loading...</span>
+            </div>
+        </div>
+        
+        <div class="image-test">
+            <img id="img2" src="/images/onam-background.jpg" alt="Test Image 2" 
+                 onload="updateStatus('status2', true, '/images/onam-background.jpg')" 
+                 onerror="updateStatus('status2', false, '/images/onam-background.jpg')">
+            <div class="image-info">
+                <strong>onam-background.jpg</strong><br>
+                Path: /images/onam-background.jpg<br>
+                <span id="status2" class="status">Loading...</span>
+            </div>
+        </div>
+        
+        <div class="image-test">
+            <img id="img3" src="images/1.jpeg" alt="Test Image 3" 
+                 onload="updateStatus('status3', true, 'images/1.jpeg')" 
+                 onerror="updateStatus('status3', false, 'images/1.jpeg')">
+            <div class="image-info">
+                <strong>1.jpeg (relative path)</strong><br>
+                Path: images/1.jpeg<br>
+                <span id="status3" class="status">Loading...</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>API Data Test</h2>
+        <button class="button" onclick="testApiData()">Load Current Event Data</button>
+        <pre id="apiResult">Click button to load API data...</pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>Manual Image Test</h2>
+        <input type="text" id="manualImagePath" placeholder="Enter image path (e.g., images/1.jpeg)" style="width: 300px; padding: 8px;">
+        <button class="button" onclick="testManualImage()">Test Image</button>
+        <div id="manualImageResult"></div>
+    </div>
+
+    <script>
+        function updateStatus(statusId, success, path) {
+            const statusEl = document.getElementById(statusId);
+            if (success) {
+                statusEl.textContent = '✅ Loaded successfully';
+                statusEl.className = 'status success';
+                console.log('✅ Image loaded:', path);
+            } else {
+                statusEl.textContent = '❌ Failed to load';
+                statusEl.className = 'status error';
+                console.log('❌ Image failed:', path);
+            }
+        }
+
+        async function testApiData() {
+            const result = document.getElementById('apiResult');
+            try {
+                result.textContent = 'Loading API data...';
+                
+                const response = await fetch('/api/data');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+                
+                // Check if there's a current event with a photo
+                if (data.currentEvent && data.currentEvent.photo) {
+                    console.log('Current event photo path:', data.currentEvent.photo);
+                }
+                
+            } catch (error) {
+                result.textContent = `Error: ${error.message}`;
+                console.error('API test failed:', error);
+            }
+        }
+
+        function testManualImage() {
+            const path = document.getElementById('manualImagePath').value.trim();
+            const resultDiv = document.getElementById('manualImageResult');
+            
+            if (!path) {
+                resultDiv.innerHTML = '<p style="color: red;">Please enter an image path</p>';
+                return;
+            }
+            
+            // Process the path like the projection page does
+            let processedPath = path;
+            if (path && !path.startsWith('http') && !path.startsWith('data:') && !path.startsWith('/')) {
+                processedPath = '/' + path;
+            }
+            
+            console.log('Testing manual image:', path, '→', processedPath);
+            
+            resultDiv.innerHTML = `
+                <div class="image-test">
+                    <img src="${processedPath}" alt="Manual test" 
+                         onload="console.log('✅ Manual image loaded:', '${processedPath}'); this.nextElementSibling.innerHTML = '<span class=\\"status success\\">✅ Loaded successfully</span>'" 
+                         onerror="console.log('❌ Manual image failed:', '${processedPath}'); this.nextElementSibling.innerHTML = '<span class=\\"status error\\">❌ Failed to load</span>'"
+                         style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #007bff;">
+                    <div>
+                        <strong>Manual Test</strong><br>
+                        Original: ${path}<br>
+                        Processed: ${processedPath}<br>
+                        <span class="status">Loading...</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Auto-load API data on page load
+        window.addEventListener('load', () => {
+            console.log('Image test page loaded');
+            setTimeout(testApiData, 1000);
+        });
+    </script>
+</body>
+</html>

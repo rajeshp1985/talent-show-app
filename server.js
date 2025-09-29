@@ -2,7 +2,8 @@
 // This replaces the need for Vercel CLI during development
 
 import express from 'express';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import multer from 'multer';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -64,6 +65,68 @@ app.use((req, res, next) => {
     return res.status(200).end();
   }
   next();
+});
+
+// Ensure images directory exists
+const imagesDir = join(__dirname, 'public', 'images');
+if (!existsSync(imagesDir)) {
+  mkdirSync(imagesDir, { recursive: true });
+}
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, imagesDir);
+  },
+  filename: (req, file, cb) => {
+    // Keep original filename or generate unique name
+    const originalName = file.originalname;
+    const extension = originalName.split('.').pop();
+    const nameWithoutExt = originalName.replace(`.${extension}`, '');
+    
+    // Use original filename, but ensure it's safe
+    const safeFilename = originalName.replace(/[^a-zA-Z0-9.-]/g, '_');
+    cb(null, safeFilename);
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    // Accept only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
+
+// File Upload Route
+app.post('/api/upload-image', upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const filename = req.file.filename;
+    const imagePath = `images/${filename}`;
+    
+    console.log(`📸 Image uploaded successfully: ${filename}`);
+    
+    res.json({ 
+      message: 'Image uploaded successfully',
+      filename: filename,
+      path: imagePath,
+      url: `/${imagePath}`
+    });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
 });
 
 // API Routes
