@@ -575,9 +575,22 @@
                 } else {
                     const participants = currentEvent.participants || [];
                     const participantsText = participants.length > 0 ? participants.join(', ') : 'Unknown Performer';
-                    const photoHtml = currentEvent.photo ? 
-                        `<img src="${currentEvent.photo}" alt="${escapeHtml(participantsText)}" onerror="this.src='${getDefaultAvatar()}'">` : 
-                        `<img src="${getDefaultAvatar()}" alt="Default participant">`;
+                    
+                    // Fix image path handling
+                    let imageSrc = getDefaultAvatar();
+                    if (currentEvent.photo) {
+                        // Handle different image path formats
+                        let photoPath = currentEvent.photo.trim();
+                        
+                        // If it's a relative path (like "images/photo.jpg"), make sure it's properly formatted
+                        if (photoPath && !photoPath.startsWith('http') && !photoPath.startsWith('data:') && !photoPath.startsWith('/')) {
+                            // Add leading slash for relative paths
+                            photoPath = '/' + photoPath;
+                        }
+                        imageSrc = photoPath;
+                    }
+                    
+                    const photoHtml = `<img src="${imageSrc}" alt="${escapeHtml(participantsText)}" onerror="this.src='${getDefaultAvatar()}'; console.log('Image failed to load:', '${imageSrc}');">`;
 
                     currentContainer.innerHTML = `
                         <div class="fade-in">
