@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Talent Show - Live Display</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Poppins:wght@300;400;500;600;700;800&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Elegant Theater-Inspired Design */
+        /* Bright & Vibrant Event Theme */
         * {
             margin: 0;
             padding: 0;
@@ -14,17 +14,24 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: 
-                radial-gradient(ellipse at top, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 1) 100%),
-                linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 25%, rgba(16, 185, 129, 0.1) 50%, rgba(245, 158, 11, 0.1) 75%, rgba(239, 68, 68, 0.1) 100%);
+                linear-gradient(135deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #ff9ff3 75%, #54a0ff 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
-            color: #f8fafc;
+            color: #2c2c54;
         }
 
-        /* Elegant animated background with subtle patterns */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Festive animated background elements */
         body::before {
             content: '';
             position: fixed;
@@ -33,126 +40,176 @@
             width: 100%;
             height: 100%;
             background-image: 
-                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.01) 2px, transparent 2px);
-            background-size: 80px 80px, 120px 120px, 160px 160px;
-            animation: elegantFloat 60s linear infinite;
+                radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.3) 2px, transparent 2px),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.2) 3px, transparent 3px),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+                radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.15) 2px, transparent 2px),
+                radial-gradient(circle at 20% 90%, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+            background-size: 100px 100px, 150px 150px, 80px 80px, 120px 120px, 90px 90px;
+            animation: sparkleFloat 20s linear infinite;
             z-index: -1;
         }
 
-        @keyframes elegantFloat {
-            0% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
-            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.6; }
-            100% { transform: translateY(0px) rotate(360deg); opacity: 0.3; }
+        @keyframes sparkleFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(360deg); }
         }
 
-        /* Sophisticated header */
+        /* Confetti animation */
+        body::after {
+            content: '🎉 ✨ 🎊 🌟 🎭 🎪 🎨 🎵 🎤 🎸 🥳 🎺 🎷 🎻';
+            position: fixed;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: confettiFall 25s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-100px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        /* Vibrant header */
         header {
             text-align: center;
-            padding: 3rem 0 2rem;
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0.4) 100%);
+            padding: 2rem 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 4px solid #ff6b6b;
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
             position: relative;
+            overflow: hidden;
         }
 
-        header::after {
+        header::before {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.6), transparent);
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
         
         header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: #f8fafc;
-            text-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+            font-family: 'Fredoka One', cursive;
+            font-size: 4rem;
+            font-weight: 400;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGradient 4s ease infinite;
             margin: 0;
-            letter-spacing: -0.02em;
+            text-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
             position: relative;
         }
 
+        @keyframes textGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
         header h1::before {
-            content: '✦';
+            content: '🎪';
             position: absolute;
-            left: -60px;
+            left: -80px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.5rem;
-            color: rgba(139, 92, 246, 0.7);
-            animation: sparkle 3s ease-in-out infinite;
+            font-size: 3rem;
+            animation: bounce 2s ease-in-out infinite;
         }
 
         header h1::after {
-            content: '✦';
+            content: '🎭';
             position: absolute;
-            right: -60px;
+            right: -80px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.5rem;
-            color: rgba(139, 92, 246, 0.7);
-            animation: sparkle 3s ease-in-out infinite 1.5s;
+            font-size: 3rem;
+            animation: bounce 2s ease-in-out infinite 1s;
         }
 
-        @keyframes sparkle {
-            0%, 100% { opacity: 0.4; transform: translateY(-50%) scale(1); }
-            50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-60%) scale(1.1); }
         }
         
         .projection-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            padding: 4rem;
+            gap: 3rem;
+            padding: 3rem;
             min-height: calc(100vh - 200px);
             max-width: 1600px;
             margin: 0 auto;
         }
         
         .projection-section h2 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #f8fafc;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2.5rem;
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #2c2c54, #40407a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-align: center;
+            margin-bottom: 2rem;
             position: relative;
-            letter-spacing: 0.02em;
+            text-shadow: 0 2px 10px rgba(44, 44, 84, 0.2);
         }
 
         .projection-section h2::after {
             content: '';
             position: absolute;
-            bottom: -15px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), transparent);
-            border-radius: 1px;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
+            border-radius: 2px;
+            animation: underlineGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes underlineGlow {
+            0% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.8); }
         }
         
-        /* Elegant event cards */
+        /* Bright and festive event cards */
         .projection-event-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 24px;
-            padding: 3rem;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            border-radius: 30px;
+            padding: 2rem;
             box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
+                0 20px 60px rgba(255, 107, 107, 0.2),
+                0 0 0 3px rgba(255, 107, 107, 0.3);
             position: relative;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .projection-event-card::before {
@@ -161,61 +218,81 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+            height: 6px;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 300% 100%;
+            animation: borderFlow 3s linear infinite;
+        }
+
+        @keyframes borderFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
         }
 
         .projection-event-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-10px) scale(1.02);
             box-shadow: 
-                0 35px 70px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            border-color: rgba(139, 92, 246, 0.3);
+                0 30px 80px rgba(255, 107, 107, 0.3),
+                0 0 0 3px rgba(255, 107, 107, 0.5);
         }
         
         .projection-event-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.25rem;
-            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
             margin-bottom: 1.5rem;
-            color: #f8fafc;
+            background: linear-gradient(45deg, #2c2c54, #40407a, #706fd3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-align: center;
             line-height: 1.2;
-            letter-spacing: -0.01em;
+            text-shadow: 0 2px 10px rgba(44, 44, 84, 0.1);
         }
         
         .projection-event-card .participants {
-            font-size: 1.125rem;
-            font-weight: 500;
+            font-size: 1.3rem;
+            font-weight: 600;
             margin-bottom: 1.5rem;
-            color: rgba(139, 92, 246, 0.9);
+            color: #ff6b6b;
             text-align: center;
-            letter-spacing: 0.01em;
+            background: linear-gradient(45deg, #ff6b6b, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .projection-event-card .description {
-            font-size: 1rem;
+            font-size: 1.1rem;
             line-height: 1.7;
-            color: rgba(248, 250, 252, 0.8);
+            color: #2c2c54;
             text-align: center;
-            font-weight: 400;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 107, 107, 0.2);
         }
         
         .projection-no-event {
             text-align: center;
-            color: rgba(248, 250, 252, 0.6);
-            font-size: 1.25rem;
+            color: #2c2c54;
+            font-size: 1.4rem;
             padding: 4rem 2rem;
-            font-weight: 300;
+            font-weight: 600;
         }
 
         .projection-no-event p:first-child {
-            font-size: 1.5rem;
+            font-size: 2rem;
             margin-bottom: 1rem;
-            color: rgba(248, 250, 252, 0.8);
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
         }
         
-        /* Elegant upcoming events */
+        /* Bright upcoming events */
         .upcoming-events-projection {
             max-height: 75vh;
             overflow-y: auto;
@@ -223,39 +300,33 @@
         }
         
         .upcoming-events-projection::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         
         .upcoming-events-projection::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
         }
         
         .upcoming-events-projection::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, rgba(139, 92, 246, 0.4), rgba(139, 92, 246, 0.6));
-            border-radius: 3px;
+            background: linear-gradient(180deg, #ff6b6b, #ff9ff3);
+            border-radius: 4px;
         }
 
         .upcoming-events-projection::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, rgba(139, 92, 246, 0.6), rgba(139, 92, 246, 0.8));
+            background: linear-gradient(180deg, #ff5252, #ff6ec7);
         }
         
         .projection-upcoming-item {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            border-radius: 25px;
             padding: 2rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.15);
             position: relative;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .projection-upcoming-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-            border-color: rgba(139, 92, 246, 0.2);
+            overflow: hidden;
         }
 
         .projection-upcoming-item::before {
@@ -264,19 +335,28 @@
             left: 0;
             top: 0;
             bottom: 0;
-            width: 3px;
-            background: linear-gradient(180deg, rgba(139, 92, 246, 0.8), rgba(59, 130, 246, 0.8));
-            border-radius: 16px 0 0 16px;
+            width: 6px;
+            background: linear-gradient(180deg, #ff6b6b, #feca57, #48dbfb);
+            border-radius: 25px 0 0 25px;
+        }
+
+        .projection-upcoming-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 45px rgba(255, 107, 107, 0.25);
+            border-color: rgba(255, 107, 107, 0.5);
         }
         
         .projection-upcoming-item h4 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.375rem;
-            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
             margin-bottom: 0.75rem;
-            color: #f8fafc;
+            background: linear-gradient(45deg, #2c2c54, #40407a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             position: relative;
-            padding-left: 2rem;
+            padding-left: 3rem;
         }
 
         .projection-upcoming-item h4::before {
@@ -285,17 +365,18 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(59, 130, 246, 0.8));
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.9rem;
+            font-weight: 800;
             color: white;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
         }
 
         .upcoming-events-projection {
@@ -303,31 +384,31 @@
         }
         
         .projection-upcoming-item .participants {
-            font-size: 0.95rem;
-            color: rgba(139, 92, 246, 0.8);
+            font-size: 1.1rem;
+            color: #ff6b6b;
             margin-bottom: 0.75rem;
-            font-weight: 500;
-            padding-left: 2rem;
+            font-weight: 600;
+            padding-left: 3rem;
         }
         
         .projection-upcoming-item .description {
-            font-size: 0.9rem;
-            color: rgba(248, 250, 252, 0.7);
+            font-size: 1rem;
+            color: #2c2c54;
             line-height: 1.6;
-            padding-left: 2rem;
-            font-weight: 400;
+            padding-left: 3rem;
+            font-weight: 500;
         }
         
-        /* Elegant announcement styles */
+        /* Bright announcement styles */
         .projection-announcement-banner {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.9) 0%, rgba(217, 119, 6, 0.9) 100%);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 24px;
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-radius: 30px;
             padding: 3rem;
             text-align: center;
             box-shadow: 
-                0 25px 50px rgba(245, 158, 11, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                0 25px 60px rgba(254, 202, 87, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -336,35 +417,45 @@
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: announcementShimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes announcementShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
         
         .projection-announcement-banner .announcement-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.75rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
             line-height: 1.4;
             color: white;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             position: relative;
             z-index: 1;
-            font-weight: 500;
-            letter-spacing: 0.01em;
+            font-weight: 700;
         }
         
         .projection-announcement-banner .announcement-icon {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
             display: block;
-            opacity: 0.9;
+            animation: iconBounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
         
         .projection-upcoming-announcement {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.15) 100%);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(254, 202, 87, 0.2) 0%, rgba(255, 159, 243, 0.2) 100%);
+            border: 2px solid rgba(254, 202, 87, 0.4);
+            border-radius: 20px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             text-align: center;
@@ -373,84 +464,94 @@
         }
         
         .projection-upcoming-announcement .announcement-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.125rem;
-            color: rgba(245, 158, 11, 0.9);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            color: #2c2c54;
             line-height: 1.4;
-            font-weight: 500;
+            font-weight: 600;
         }
         
         .projection-upcoming-announcement .announcement-icon {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             margin-bottom: 0.75rem;
             display: block;
-            opacity: 0.8;
         }
         
-        /* Elegant photo display */
+        /* Bright photo display - optimized for larger size */
         .event-photo-projection {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 2.5rem;
+            gap: 2rem;
             margin-bottom: 2rem;
             justify-content: center;
         }
         
         .event-photo-projection img {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
+            width: 320px;
+            height: 240px;
+            border-radius: 20px;
             object-fit: cover;
-            border: 3px solid rgba(139, 92, 246, 0.3);
+            border: 6px solid #ff6b6b;
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.1);
+                0 25px 50px rgba(255, 107, 107, 0.4),
+                0 0 0 6px rgba(255, 255, 255, 0.9),
+                0 0 40px rgba(255, 107, 107, 0.3);
             transition: all 0.4s ease;
             position: relative;
         }
 
         .event-photo-projection img:hover {
-            transform: scale(1.05);
-            border-color: rgba(139, 92, 246, 0.6);
+            transform: scale(1.03) rotate(1deg);
+            border-color: #feca57;
             box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.4),
-                0 0 0 1px rgba(255, 255, 255, 0.2),
-                0 0 30px rgba(139, 92, 246, 0.3);
+                0 30px 60px rgba(254, 202, 87, 0.5),
+                0 0 0 6px rgba(255, 255, 255, 1),
+                0 0 50px rgba(254, 202, 87, 0.4);
         }
 
-        /* Loading animation */
+        .event-photo-projection .event-details {
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Fun loading animation */
         .loading-spinner {
             display: inline-block;
-            width: 32px;
-            height: 32px;
-            border: 2px solid rgba(139, 92, 246, 0.2);
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 107, 107, 0.3);
             border-radius: 50%;
-            border-top-color: rgba(139, 92, 246, 0.8);
-            animation: spin 1s ease-in-out infinite;
+            border-top-color: #ff6b6b;
+            animation: colorfulSpin 1s ease-in-out infinite;
             margin-bottom: 1rem;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes colorfulSpin {
+            0% { transform: rotate(0deg); border-top-color: #ff6b6b; }
+            25% { border-top-color: #feca57; }
+            50% { transform: rotate(180deg); border-top-color: #48dbfb; }
+            75% { border-top-color: #ff9ff3; }
+            100% { transform: rotate(360deg); border-top-color: #ff6b6b; }
         }
 
-        /* Status indicator */
+        /* Live status indicator */
         .status-indicator {
             position: fixed;
             top: 24px;
             right: 24px;
-            width: 10px;
-            height: 10px;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-            animation: statusPulse 2s ease-in-out infinite;
+            background: linear-gradient(135deg, #10b981, #06d6a0);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+            animation: liveStatusPulse 1.5s ease-in-out infinite;
             z-index: 1000;
         }
 
-        @keyframes statusPulse {
+        @keyframes liveStatusPulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
         }
 
         /* Responsive design */
@@ -462,7 +563,7 @@
             }
             
             header h1 {
-                font-size: 2.5rem;
+                font-size: 3rem;
             }
 
             header h1::before,
@@ -471,7 +572,7 @@
             }
             
             .projection-section h2 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
 
             .projection-event-card {
@@ -479,7 +580,7 @@
             }
 
             .projection-event-card h3 {
-                font-size: 1.875rem;
+                font-size: 2rem;
             }
 
             .event-photo-projection {
@@ -488,50 +589,66 @@
             }
 
             .event-photo-projection img {
-                width: 120px;
-                height: 120px;
+                width: 280px;
+                height: 180px;
             }
         }
 
         /* Smooth transitions */
         .fade-in {
-            animation: fadeIn 0.6s ease-out;
+            animation: brightFadeIn 0.8s ease-out;
         }
 
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+        @keyframes brightFadeIn {
+            0% { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.9); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        /* Fun hover effects */
+        .projection-event-card:hover h3 {
+            animation: textBounce 0.6s ease-in-out;
+        }
+
+        @keyframes textBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
     </style>
 </head>
 <body>
-    <div class="status-indicator" title="Live Connection Active"></div>
+    <div class="status-indicator" title="🔴 LIVE - Talent Show in Progress!"></div>
     
     <header>
-        <h1>Talent Show Live Display</h1>
+        <h1>🌟 PROSPER ONAM 🌟</h1>
     </header>
 
     <main>
         <div class="projection-layout">
             <!-- Left Half - Current Item -->
             <div class="projection-section">
-                <h2>Now Presenting</h2>
+                <h2>✨ Now on Stage ✨</h2>
                 <div id="projectionCurrentEvent" class="projection-event-card">
                     <div class="projection-no-event">
                         <div class="loading-spinner"></div>
-                        <p>Preparing the stage...</p>
-                        <p>The next performance will begin shortly</p>
+                        <p>🎭 Getting Ready! 🎭</p>
+                        <p>The next amazing performance is about to begin!</p>
                     </div>
                 </div>
             </div>
 
             <!-- Right Half - Upcoming Items -->
             <div class="projection-section">
-                <h2>Coming Up Next</h2>
+                <h2>🎪 Coming Up Next 🎪</h2>
                 <div id="projectionUpcomingEvents" class="upcoming-events-projection">
                     <div class="projection-no-event">
                         <div class="loading-spinner"></div>
-                        <p>Loading upcoming performances...</p>
+                        <p>🌈 Loading the lineup... 🌈</p>
                     </div>
                 </div>
             </div>
@@ -561,20 +678,19 @@
                 if (!currentEvent) {
                     currentContainer.innerHTML = `
                         <div class="projection-no-event fade-in">
-                            <p>The stage awaits</p>
-                            <p>Next performance will begin momentarily</p>
+                            <p>🎭 The stage awaits! 🎭</p>
+                            <p>Get ready for the next spectacular performance!</p>
                         </div>
                     `;
                 } else if (currentEvent.type === 'announcement') {
                     currentContainer.innerHTML = `
                         <div class="projection-announcement-banner fade-in">
-                            <span class="announcement-icon">📢</span>
                             <div class="announcement-text">${escapeHtml(currentEvent.description)}</div>
                         </div>
                     `;
                 } else {
                     const participants = currentEvent.participants || [];
-                    const participantsText = participants.length > 0 ? participants.join(', ') : 'Unknown Performer';
+                    const participantsText = participants.length > 0 ? participants.join(', ') : 'Amazing Performer';
                     
                     // Enhanced image path handling with debugging
                     let imageSrc = getDefaultAvatar();
@@ -617,12 +733,12 @@
                         <div class="fade-in">
                             <div class="event-photo-projection">
                                 ${photoHtml}
-                                <div>
-                                    <h3>${escapeHtml(currentEvent.name || 'Untitled Event')}</h3>
-                                    <div class="participants"><strong>Featuring:</strong> ${escapeHtml(participantsText)}</div>
+                                <div class="event-details">
+                                    <h3>🎪 ${escapeHtml(currentEvent.name || 'Spectacular Performance')} 🎪</h3>
+                                    <div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(participantsText)}</div>
                                 </div>
                             </div>
-                            <div class="description">${escapeHtml(currentEvent.description || 'No description available')}</div>
+                            <div class="description">🌟 ${escapeHtml(currentEvent.description || 'An amazing performance that will leave you speechless!')} 🌟</div>
                         </div>
                     `;
                 }
@@ -637,8 +753,8 @@
                 if (upcomingEvents.length === 0) {
                     upcomingContainer.innerHTML = `
                         <div class="projection-no-event fade-in">
-                            <p>No upcoming performances</p>
-                            <p>Please check back soon for more amazing acts</p>
+                            <p>🎉 What a show! 🎉</p>
+                            <p>Stay tuned for more incredible performances!</p>
                         </div>
                     `;
                 } else {
@@ -652,12 +768,12 @@
                             `;
                         } else {
                             const participants = item.participants || [];
-                            const participantsText = participants.length > 0 ? participants.join(', ') : 'Unknown Performer';
+                            const participantsText = participants.length > 0 ? participants.join(', ') : 'Amazing Performer';
                             return `
                                 <div class="projection-upcoming-item fade-in">
-                                    <h4>${escapeHtml(item.name || 'Untitled Event')}</h4>
-                                    <div class="participants"><strong>Featuring:</strong> ${escapeHtml(participantsText)}</div>
-                                    <div class="description">${escapeHtml(item.description || 'No description available')}</div>
+                                    <h4>🎭 ${escapeHtml(item.name || 'Spectacular Act')}</h4>
+                                    <div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(participantsText)}</div>
+                                    <div class="description">🌟 ${escapeHtml(item.description || 'An incredible performance awaits!')}</div>
                                 </div>
                             `;
                         }
@@ -670,14 +786,14 @@
                 console.error('Error loading data:', error);
                 currentContainer.innerHTML = `
                     <div class="projection-no-event">
-                        <p>Unable to load performance data</p>
+                        <p>🎭 Oops! Something went wrong 🎭</p>
                         <p>Please check the connection and try again</p>
                     </div>
                 `;
                 
                 upcomingContainer.innerHTML = `
                     <div class="projection-no-event">
-                        <p>Unable to load upcoming performances</p>
+                        <p>🌈 Unable to load upcoming acts 🌈</p>
                     </div>
                 `;
             }
@@ -690,7 +806,7 @@
         }
 
         function getDefaultAvatar() {
-            return "data:image/svg+xml,%3Csvg width='140' height='140' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='elegantDefaultBg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%233b82f6;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='140' height='140' fill='url(%23elegantDefaultBg)'/%3E%3Ccircle cx='70' cy='55' r='20' fill='white' opacity='0.9'/%3E%3Cellipse cx='70' cy='105' rx='30' ry='40' fill='white' opacity='0.9'/%3E%3Ctext x='70' y='125' font-family='serif' font-size='16' fill='white' text-anchor='middle'%3E🎭%3C/text%3E%3C/svg%3E";
+            return "data:image/svg+xml,%3Csvg width='160' height='160' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='brightDefaultBg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ff6b6b;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%23feca57;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2348dbfb;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='160' height='160' fill='url(%23brightDefaultBg)'/%3E%3Ccircle cx='80' cy='60' r='25' fill='white' opacity='0.9'/%3E%3Cellipse cx='80' cy='120' rx='35' ry='45' fill='white' opacity='0.9'/%3E%3Ctext x='80' y='140' font-family='Arial, sans-serif' font-size='20' fill='white' text-anchor='middle'%3E🎭%3C/text%3E%3C/svg%3E";
         }
 
         // Load data on page load and refresh every 3 seconds
