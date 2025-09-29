@@ -2,6 +2,7 @@
   "name": "talent-show-app",
   "version": "1.0.0",
   "description": "A comprehensive web application for managing talent shows with real-time projection capabilities",
+  "type": "module",
   "main": "api/index.js",
   "scripts": {
     "dev": "vercel dev",
