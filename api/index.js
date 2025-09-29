@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
 // Data file path
-const DATA_FILE = join(process.cwd(), 'data', 'events-data.json');
+const DATA_FILE = join(process.cwd(), 'public', 'data', 'events-data.json');
 
 // Initialize data structure
 const initializeData = () => ({
