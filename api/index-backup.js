@@ -1,40 +1,17 @@
-// Vercel Serverless Function with Redis Database Integration
-// This version uses Redis for persistent data storage
+// Vercel Serverless Function for Talent Show App
+// This replaces the Python backend with a more Vercel-optimized solution
 
-import { createClient } from 'redis';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { join, dirname } from 'path';
 
-// Data keys for Redis storage
-const DATA_KEYS = {
-  EVENTS: 'talent-show:events',
-  CURRENT_EVENT: 'talent-show:current-event',
-  FINISHED_EVENTS: 'talent-show:finished-events',
-  LAST_UPDATED: 'talent-show:last-updated'
-};
+// Data file path - use /tmp in serverless environment, public/data locally
+const DATA_FILE = process.env.VERCEL 
+  ? join('/tmp', 'events-data.json')
+  : join(process.cwd(), 'public', 'data', 'events-data.json');
 
-// Redis client instance
-let redisClient = null;
-
-// Initialize Redis client
-const getRedisClient = async () => {
-  if (!redisClient && process.env.REDIS_URL) {
-    try {
-      redisClient = createClient({
-        url: process.env.REDIS_URL
-      });
-      
-      redisClient.on('error', (err) => {
-        console.error('Redis Client Error:', err);
-      });
-      
-      await redisClient.connect();
-      console.log('Redis client connected successfully');
-    } catch (error) {
-      console.error('Failed to connect to Redis:', error);
-      redisClient = null;
-    }
-  }
-  return redisClient;
-};
+// In-memory cache for Vercel (since /tmp might not persist between invocations)
+let memoryCache = null;
+let cacheTimestamp = null;
 
 // Initialize data structure
 const initializeData = () => ({
@@ -44,63 +21,82 @@ const initializeData = () => ({
   lastUpdated: new Date().toISOString()
 });
 
-// Read data from Redis store
-const readData = async () => {
+// Read data from file or memory
+const readData = () => {
   try {
-    const client = await getRedisClient();
-    
-    // Check if Redis is available
-    if (!client) {
-      console.log('Redis not available, using fallback data');
-      return initializeData();
+    // In Vercel, try memory cache first
+    if (process.env.VERCEL && memoryCache && cacheTimestamp) {
+      // Use cache if it's less than 1 minute old
+      if (Date.now() - cacheTimestamp < 60000) {
+        return memoryCache;
+      }
     }
 
-    const [events, currentEvent, finishedEvents, lastUpdated] = await Promise.all([
-      client.get(DATA_KEYS.EVENTS),
-      client.get(DATA_KEYS.CURRENT_EVENT),
-      client.get(DATA_KEYS.FINISHED_EVENTS),
-      client.get(DATA_KEYS.LAST_UPDATED)
-    ]);
-
-    return {
-      events: events ? JSON.parse(events) : [],
-      currentEvent: currentEvent ? JSON.parse(currentEvent) : null,
-      finishedEvents: finishedEvents ? JSON.parse(finishedEvents) : [],
-      lastUpdated: lastUpdated || new Date().toISOString()
-    };
+    // Try to read from file
+    if (existsSync(DATA_FILE)) {
+      const data = JSON.parse(readFileSync(DATA_FILE, 'utf8'));
+      
+      // Update memory cache
+      if (process.env.VERCEL) {
+        memoryCache = data;
+        cacheTimestamp = Date.now();
+      }
+      
+      return data;
+    } else {
+      // File doesn't exist, create initial data
+      const initialData = initializeData();
+      writeData(initialData);
+      return initialData;
+    }
   } catch (error) {
-    console.error('Error reading from Redis:', error);
+    console.error('Error reading data:', error);
+    
+    // Return memory cache if available, otherwise initialize
+    if (process.env.VERCEL && memoryCache) {
+      return memoryCache;
+    }
+    
     return initializeData();
   }
 };
 
-// Write data to Redis store
-const writeData = async (data) => {
+// Write data to file and memory
+const writeData = (data) => {
   try {
-    const client = await getRedisClient();
-    
-    if (!client) {
-      console.log('Redis not available, skipping write');
-      return;
-    }
-
     data.lastUpdated = new Date().toISOString();
-
-    // Write all data to Redis store
-    await Promise.all([
-      client.set(DATA_KEYS.EVENTS, JSON.stringify(data.events)),
-      client.set(DATA_KEYS.CURRENT_EVENT, JSON.stringify(data.currentEvent)),
-      client.set(DATA_KEYS.FINISHED_EVENTS, JSON.stringify(data.finishedEvents)),
-      client.set(DATA_KEYS.LAST_UPDATED, data.lastUpdated)
-    ]);
-
-    console.log('Data written to Redis successfully:', {
-      events: data.events.length,
+    
+    // Ensure directory exists
+    const dir = dirname(DATA_FILE);
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+    }
+    
+    // Write to file
+    writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+    
+    // Update memory cache
+    if (process.env.VERCEL) {
+      memoryCache = { ...data };
+      cacheTimestamp = Date.now();
+    }
+    
+    console.log('Data written successfully:', { 
+      file: DATA_FILE, 
+      events: data.events.length, 
       currentEvent: !!data.currentEvent,
-      finishedEvents: data.finishedEvents.length
+      environment: process.env.VERCEL ? 'vercel' : 'local'
     });
+    
   } catch (error) {
-    console.error('Error writing to Redis:', error);
+    console.error('Error writing data:', error);
+    
+    // At least update memory cache
+    if (process.env.VERCEL) {
+      memoryCache = { ...data };
+      cacheTimestamp = Date.now();
+    }
+    
     throw error;
   }
 };
@@ -112,7 +108,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-export default async function handler(req, res) {
+export default function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).json({});
@@ -129,16 +125,14 @@ export default async function handler(req, res) {
   try {
     // Route handling
     if (path === '/api/status') {
-      const data = await readData();
-      const client = await getRedisClient();
-      
-      return res.status(200).json({
-        status: 'ok',
+      const data = readData();
+      return res.status(200).json({ 
+        status: 'ok', 
         timestamp: new Date().toISOString(),
         environment: process.env.VERCEL ? 'vercel' : 'local',
-        storage: client ? 'redis' : 'fallback',
-        redisAvailable: !!client,
-        redisUrl: process.env.REDIS_URL ? 'configured' : 'missing',
+        dataFile: DATA_FILE,
+        hasMemoryCache: !!memoryCache,
+        cacheAge: cacheTimestamp ? Date.now() - cacheTimestamp : null,
         dataStats: {
           events: data.events.length,
           currentEvent: !!data.currentEvent,
@@ -150,72 +144,72 @@ export default async function handler(req, res) {
 
     if (path === '/api/data') {
       if (method === 'GET') {
-        const data = await readData();
+        const data = readData();
         return res.status(200).json(data);
       }
     }
 
     if (path === '/api/events') {
-      const data = await readData();
-
+      const data = readData();
+      
       if (method === 'GET') {
         return res.status(200).json(data.events);
       }
-
+      
       if (method === 'POST') {
         const newEvent = req.body;
-
+        
         // Validate required fields
         if (!newEvent.id || !newEvent.type) {
           return res.status(400).json({ error: 'Missing required fields: id, type' });
         }
-
+        
         // Check for duplicate IDs
         const allIds = [
           ...data.events.map(e => e.id),
           ...(data.currentEvent ? [data.currentEvent.id] : []),
           ...data.finishedEvents.map(e => e.id)
         ];
-
+        
         if (allIds.includes(newEvent.id)) {
           return res.status(400).json({ error: `Event ID ${newEvent.id} already exists` });
         }
-
+        
         data.events.push(newEvent);
-        await writeData(data);
+        writeData(data);
         return res.status(201).json({ message: 'Event added successfully', event: newEvent });
       }
     }
 
     if (path.startsWith('/api/events/')) {
       const eventId = path.split('/')[3];
-      const data = await readData();
-
+      const data = readData();
+      
       if (method === 'PUT') {
         const eventIndex = data.events.findIndex(e => e.id === eventId);
         if (eventIndex === -1) {
           return res.status(404).json({ error: 'Event not found' });
         }
-
+        
         data.events[eventIndex] = { ...data.events[eventIndex], ...req.body };
-        await writeData(data);
+        writeData(data);
         return res.status(200).json({ message: 'Event updated successfully' });
       }
-
+      
       if (method === 'DELETE') {
         const eventIndex = data.events.findIndex(e => e.id === eventId);
         if (eventIndex === -1) {
           return res.status(404).json({ error: 'Event not found' });
         }
-
+        
         data.events.splice(eventIndex, 1);
-        await writeData(data);
+        writeData(data);
         return res.status(200).json({ message: 'Event deleted successfully' });
       }
     }
 
     if (path === '/api/current') {
-      const data = await readData();
+      const data = readData();
       if (method === 'GET') {
         return res.status(200).json(data.currentEvent);
       }
@@ -223,52 +217,52 @@ export default async function handler(req, res) {
 
     if (path === '/api/start-next') {
       if (method === 'POST') {
-        const data = await readData();
-
+        const data = readData();
+        
         if (data.events.length === 0) {
           return res.status(400).json({ error: 'No events to start' });
         }
-
+        
         data.currentEvent = data.events.shift();
-        await writeData(data);
-        return res.status(200).json({
-          message: 'Next event started',
-          currentEvent: data.currentEvent
+        writeData(data);
+        return res.status(200).json({ 
+          message: 'Next event started', 
+          currentEvent: data.currentEvent 
         });
       }
     }
 
     if (path === '/api/finish-current') {
       if (method === 'POST') {
-        const data = await readData();
-
+        const data = readData();
+        
         if (!data.currentEvent) {
           return res.status(400).json({ error: 'No current event to finish' });
         }
-
+        
         const finishedEvent = {
           ...data.currentEvent,
           finishedAt: new Date().toISOString()
         };
-
+        
         data.finishedEvents.push(finishedEvent);
         data.currentEvent = null;
-
+        
         // Auto-start next event if available
         if (data.events.length > 0) {
           data.currentEvent = data.events.shift();
         }
-
-        await writeData(data);
-        return res.status(200).json({
-          message: 'Current event finished',
-          currentEvent: data.currentEvent
+        
+        writeData(data);
+        return res.status(200).json({ 
+          message: 'Current event finished', 
+          currentEvent: data.currentEvent 
         });
       }
     }
 
     if (path === '/api/finished') {
-      const data = await readData();
+      const data = readData();
       if (method === 'GET') {
         return res.status(200).json(data.finishedEvents);
       }
@@ -276,16 +270,16 @@ export default async function handler(req, res) {
 
     if (path.startsWith('/api/finished/')) {
       const eventId = path.split('/')[3];
-      const data = await readData();
-
+      const data = readData();
+      
       if (method === 'DELETE') {
         const eventIndex = data.finishedEvents.findIndex(e => e.id === eventId);
         if (eventIndex === -1) {
           return res.status(404).json({ error: 'Finished event not found' });
         }
-
+        
         data.finishedEvents.splice(eventIndex, 1);
-        await writeData(data);
+        writeData(data);
         return res.status(200).json({ message: 'Finished event deleted successfully' });
       }
     }
@@ -293,18 +287,18 @@ export default async function handler(req, res) {
     if (path === '/api/restore') {
       if (method === 'POST') {
         const { id } = req.body;
-        const data = await readData();
-
+        const data = readData();
+        
         const eventIndex = data.finishedEvents.findIndex(e => e.id === id);
         if (eventIndex === -1) {
           return res.status(404).json({ error: 'Finished event not found' });
         }
-
+        
         const eventToRestore = data.finishedEvents.splice(eventIndex, 1)[0];
         delete eventToRestore.finishedAt;
-
+        
         data.events.push(eventToRestore);
-        await writeData(data);
+        writeData(data);
         return res.status(200).json({ message: 'Event restored successfully' });
       }
     }

@@ -67,6 +67,27 @@ class TalentShowManager {
             this.items = data.events || [];
             this.currentItem = data.currentEvent || null;
             this.finishedItems = data.finishedEvents || [];
+            
+            // Process photo URLs for all loaded events
+            this.items = this.items.map(item => {
+                if (item.type === 'event' && item.photo) {
+                    item.photo = window.imageUrlHandler.processImageUrl(item.photo);
+                }
+                return item;
+            });
+            
+            // Process photo URL for current event
+            if (this.currentItem && this.currentItem.type === 'event' && this.currentItem.photo) {
+                this.currentItem.photo = window.imageUrlHandler.processImageUrl(this.currentItem.photo);
+            }
+            
+            // Process photo URLs for finished events
+            this.finishedItems = this.finishedItems.map(item => {
+                if (item.type === 'event' && item.photo) {
+                    item.photo = window.imageUrlHandler.processImageUrl(item.photo);
+                }
+                return item;
+            });
         } catch (error) {
             console.error('Failed to load events:', error);
             // Initialize with sample data if loading fails
@@ -139,7 +160,13 @@ class TalentShowManager {
         if (itemData.type === 'event') {
             newItem.name = itemData.name;
             newItem.participants = itemData.participants.split(',').map(p => p.trim());
-            newItem.photo = itemData.photo || "data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='defaultBg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234caf50;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23388e3c;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='300' fill='url(%23defaultBg)'/%3E%3Ccircle cx='150' cy='120' r='40' fill='white' opacity='0.8'/%3E%3Cellipse cx='150' cy='220' rx='60' ry='80' fill='white' opacity='0.8'/%3E%3Ctext x='150' y='270' font-family='Arial, sans-serif' font-size='32' fill='white' text-anchor='middle'%3E🎪%3C/text%3E%3C/svg%3E";
+            
+            // Process the image URL using the image URL handler
+            if (itemData.photo && itemData.photo.trim()) {
+                newItem.photo = window.imageUrlHandler.processImageUrl(itemData.photo.trim());
+            } else {
+                newItem.photo = window.imageUrlHandler.getDefaultImage();
+            }
         }
 
         try {
@@ -159,7 +186,13 @@ class TalentShowManager {
         if (itemData.type === 'event') {
             updatedItem.name = itemData.name;
             updatedItem.participants = itemData.participants.split(',').map(p => p.trim());
-            updatedItem.photo = itemData.photo;
+            
+            // Process the image URL using the image URL handler
+            if (itemData.photo && itemData.photo.trim()) {
+                updatedItem.photo = window.imageUrlHandler.processImageUrl(itemData.photo.trim());
+            } else {
+                updatedItem.photo = window.imageUrlHandler.getDefaultImage();
+            }
         }
 
         try {
