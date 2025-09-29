@@ -1,17 +1,10 @@
-// Vercel Serverless Function for Talent Show App
-// This replaces the Python backend with a more Vercel-optimized solution
+// Vercel Serverless Function with Blob Storage Integration
+// This version uses Vercel Blob for persistent JSON data storage
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
+import { put, head, list } from '@vercel/blob';
 
-// Data file path - use /tmp in serverless environment, public/data locally
-const DATA_FILE = process.env.VERCEL 
-  ? join('/tmp', 'events-data.json')
-  : join(process.cwd(), 'public', 'data', 'events-data.json');
-
-// In-memory cache for Vercel (since /tmp might not persist between invocations)
-let memoryCache = null;
-let cacheTimestamp = null;
+// Blob file name for our data
+const DATA_BLOB_NAME = 'talent-show-data.json';
 
 // Initialize data structure
 const initializeData = () => ({
@@ -21,82 +14,73 @@ const initializeData = () => ({
   lastUpdated: new Date().toISOString()
 });
 
-// Read data from file or memory
-const readData = () => {
+// Read data from Blob storage
+const readData = async () => {
   try {
-    // In Vercel, try memory cache first
-    if (process.env.VERCEL && memoryCache && cacheTimestamp) {
-      // Use cache if it's less than 1 minute old
-      if (Date.now() - cacheTimestamp < 60000) {
-        return memoryCache;
-      }
+    // Check if we're in Vercel environment with Blob available
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.log('Blob not available, using fallback data');
+      return initializeData();
     }
 
-    // Try to read from file
-    if (existsSync(DATA_FILE)) {
-      const data = JSON.parse(readFileSync(DATA_FILE, 'utf8'));
-      
-      // Update memory cache
-      if (process.env.VERCEL) {
-        memoryCache = data;
-        cacheTimestamp = Date.now();
-      }
-      
-      return data;
-    } else {
-      // File doesn't exist, create initial data
+    // List blobs to check if our data file exists
+    const { blobs } = await list();
+    const dataBlob = blobs.find(blob => blob.pathname === DATA_BLOB_NAME);
+    
+    if (!dataBlob) {
+      console.log('Data blob not found, initializing new data');
       const initialData = initializeData();
-      writeData(initialData);
+      await writeData(initialData);
       return initialData;
     }
-  } catch (error) {
-    console.error('Error reading data:', error);
-    
-    // Return memory cache if available, otherwise initialize
-    if (process.env.VERCEL && memoryCache) {
-      return memoryCache;
+
+    // Fetch the blob content
+    const response = await fetch(dataBlob.url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch blob: ${response.statusText}`);
     }
     
+    const data = await response.json();
+    console.log('Data loaded from blob successfully');
+    return data;
+
+  } catch (error) {
+    console.error('Error reading from Blob:', error);
     return initializeData();
   }
 };
 
-// Write data to file and memory
-const writeData = (data) => {
+// Write data to Blob storage
+const writeData = async (data) => {
   try {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.log('Blob not available, skipping write');
+      return;
+    }
+
     data.lastUpdated = new Date().toISOString();
     
-    // Ensure directory exists
-    const dir = dirname(DATA_FILE);
-    if (!existsSync(dir)) {
-      mkdirSync(dir, { recursive: true });
-    }
+    // Convert data to JSON string
+    const jsonData = JSON.stringify(data, null, 2);
     
-    // Write to file
-    writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+    // Create a blob from the JSON data
+    const blob = new Blob([jsonData], { type: 'application/json' });
     
-    // Update memory cache
-    if (process.env.VERCEL) {
-      memoryCache = { ...data };
-      cacheTimestamp = Date.now();
-    }
-    
-    console.log('Data written successfully:', { 
-      file: DATA_FILE, 
-      events: data.events.length, 
-      currentEvent: !!data.currentEvent,
-      environment: process.env.VERCEL ? 'vercel' : 'local'
+    // Upload to Vercel Blob storage
+    const result = await put(DATA_BLOB_NAME, blob, {
+      access: 'public', // Make it accessible for reading
+      addRandomSuffix: false // Keep consistent filename
     });
-    
+
+    console.log('Data written to Blob successfully:', {
+      url: result.url,
+      events: data.events.length,
+      currentEvent: !!data.currentEvent,
+      finishedEvents: data.finishedEvents.length
+    });
+
   } catch (error) {
-    console.error('Error writing data:', error);
-    
-    // At least update memory cache
-    if (process.env.VERCEL) {
-      memoryCache = { ...data };
-      cacheTimestamp = Date.now();
-    }
-    
+    console.error('Error writing to Blob:', error);
     throw error;
   }
 };
@@ -108,7 +92,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).json({});
@@ -125,14 +109,13 @@ export default function handler(req, res) {
   try {
     // Route handling
     if (path === '/api/status') {
-      const data = readData();
-      return res.status(200).json({ 
-        status: 'ok', 
+      const data = await readData();
+      return res.status(200).json({
+        status: 'ok',
         timestamp: new Date().toISOString(),
         environment: process.env.VERCEL ? 'vercel' : 'local',
-        dataFile: DATA_FILE,
-        hasMemoryCache: !!memoryCache,
-        cacheAge: cacheTimestamp ? Date.now() - cacheTimestamp : null,
+        storage: process.env.BLOB_READ_WRITE_TOKEN ? 'blob' : 'fallback',
+        blobAvailable: !!process.env.BLOB_READ_WRITE_TOKEN,
         dataStats: {
           events: data.events.length,
           currentEvent: !!data.currentEvent,
@@ -144,72 +127,72 @@ export default function handler(req, res) {
 
     if (path === '/api/data') {
       if (method === 'GET') {
-        const data = readData();
+        const data = await readData();
         return res.status(200).json(data);
       }
     }
 
     if (path === '/api/events') {
-      const data = readData();
-      
+      const data = await readData();
+
       if (method === 'GET') {
         return res.status(200).json(data.events);
       }
-      
+
       if (method === 'POST') {
         const newEvent = req.body;
-        
+
         // Validate required fields
         if (!newEvent.id || !newEvent.type) {
           return res.status(400).json({ error: 'Missing required fields: id, type' });
         }
-        
+
         // Check for duplicate IDs
         const allIds = [
           ...data.events.map(e => e.id),
           ...(data.currentEvent ? [data.currentEvent.id] : []),
           ...data.finishedEvents.map(e => e.id)
         ];
-        
+
         if (allIds.includes(newEvent.id)) {
           return res.status(400).json({ error: `Event ID ${newEvent.id} already exists` });
         }
-        
+
         data.events.push(newEvent);
-        writeData(data);
+        await writeData(data);
         return res.status(201).json({ message: 'Event added successfully', event: newEvent });
       }
     }
 
     if (path.startsWith('/api/events/')) {
       const eventId = path.split('/')[3];
-      const data = readData();
-      
+      const data = await readData();
+
       if (method === 'PUT') {
         const eventIndex = data.events.findIndex(e => e.id === eventId);
         if (eventIndex === -1) {
           return res.status(404).json({ error: 'Event not found' });
         }
-        
+
         data.events[eventIndex] = { ...data.events[eventIndex], ...req.body };
-        writeData(data);
+        await writeData(data);
         return res.status(200).json({ message: 'Event updated successfully' });
       }
-      
+
       if (method === 'DELETE') {
         const eventIndex = data.events.findIndex(e => e.id === eventId);
         if (eventIndex === -1) {
           return res.status(404).json({ error: 'Event not found' });
         }
-        
+
         data.events.splice(eventIndex, 1);
-        writeData(data);
+        await writeData(data);
         return res.status(200).json({ message: 'Event deleted successfully' });
       }
     }
 
     if (path === '/api/current') {
-      const data = readData();
+      const data = await readData();
       if (method === 'GET') {
         return res.status(200).json(data.currentEvent);
       }
@@ -217,52 +200,52 @@ export default function handler(req, res) {
 
     if (path === '/api/start-next') {
       if (method === 'POST') {
-        const data = readData();
-        
+        const data = await readData();
+
         if (data.events.length === 0) {
           return res.status(400).json({ error: 'No events to start' });
         }
-        
+
         data.currentEvent = data.events.shift();
-        writeData(data);
-        return res.status(200).json({ 
-          message: 'Next event started', 
-          currentEvent: data.currentEvent 
+        await writeData(data);
+        return res.status(200).json({
+          message: 'Next event started',
+          currentEvent: data.currentEvent
         });
       }
     }
 
     if (path === '/api/finish-current') {
       if (method === 'POST') {
-        const data = readData();
-        
+        const data = await readData();
+
         if (!data.currentEvent) {
           return res.status(400).json({ error: 'No current event to finish' });
         }
-        
+
         const finishedEvent = {
           ...data.currentEvent,
           finishedAt: new Date().toISOString()
         };
-        
+
         data.finishedEvents.push(finishedEvent);
         data.currentEvent = null;
-        
+
         // Auto-start next event if available
         if (data.events.length > 0) {
           data.currentEvent = data.events.shift();
         }
-        
-        writeData(data);
-        return res.status(200).json({ 
-          message: 'Current event finished', 
-          currentEvent: data.currentEvent 
+
+        await writeData(data);
+        return res.status(200).json({
+          message: 'Current event finished',
+          currentEvent: data.currentEvent
         });
       }
     }
 
     if (path === '/api/finished') {
-      const data = readData();
+      const data = await readData();
       if (method === 'GET') {
         return res.status(200).json(data.finishedEvents);
       }
@@ -270,16 +253,16 @@ export default function handler(req, res) {
 
     if (path.startsWith('/api/finished/')) {
       const eventId = path.split('/')[3];
-      const data = readData();
-      
+      const data = await readData();
+
       if (method === 'DELETE') {
         const eventIndex = data.finishedEvents.findIndex(e => e.id === eventId);
         if (eventIndex === -1) {
           return res.status(404).json({ error: 'Finished event not found' });
         }
-        
+
         data.finishedEvents.splice(eventIndex, 1);
-        writeData(data);
+        await writeData(data);
         return res.status(200).json({ message: 'Finished event deleted successfully' });
       }
     }
@@ -287,18 +270,18 @@ export default function handler(req, res) {
     if (path === '/api/restore') {
       if (method === 'POST') {
         const { id } = req.body;
-        const data = readData();
-        
+        const data = await readData();
+
         const eventIndex = data.finishedEvents.findIndex(e => e.id === id);
         if (eventIndex === -1) {
           return res.status(404).json({ error: 'Finished event not found' });
         }
-        
+
         const eventToRestore = data.finishedEvents.splice(eventIndex, 1)[0];
         delete eventToRestore.finishedAt;
-        
+
         data.events.push(eventToRestore);
-        writeData(data);
+        await writeData(data);
         return res.status(200).json({ message: 'Event restored successfully' });
       }
     }

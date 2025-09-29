@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Talent Show API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Talent Show API Debug Tool</h1>
+    
+    <div class="section">
+        <h2>API Status</h2>
+        <button class="button" onclick="checkStatus()">Check API Status</button>
+        <pre id="statusResult"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>Data Operations</h2>
+        <button class="button" onclick="getAllData()">Get All Data</button>
+        <button class="button" onclick="addTestEvent()">Add Test Event</button>
+        <button class="button" onclick="startNextEvent()">Start Next Event</button>
+        <pre id="dataResult"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>Test Sequence</h2>
+        <button class="button" onclick="runFullTest()">Run Full Test</button>
+        <pre id="testResult"></pre>
+    </div>
+
+    <script>
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const response = await fetch(endpoint, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                throw new Error(`API call failed: ${error.message}`);
+            }
+        }
+
+        async function checkStatus() {
+            const result = document.getElementById('statusResult');
+            try {
+                const data = await apiCall('/api/status');
+                result.innerHTML = JSON.stringify(data, null, 2);
+                result.className = 'success';
+            } catch (error) {
+                result.innerHTML = error.message;
+                result.className = 'error';
+            }
+        }
+
+        async function getAllData() {
+            const result = document.getElementById('dataResult');
+            try {
+                const data = await apiCall('/api/data');
+                result.innerHTML = JSON.stringify(data, null, 2);
+                result.className = 'success';
+            } catch (error) {
+                result.innerHTML = error.message;
+                result.className = 'error';
+            }
+        }
+
+        async function addTestEvent() {
+            const result = document.getElementById('dataResult');
+            try {
+                const testEvent = {
+                    id: 'test-' + Date.now(),
+                    type: 'performance',
+                    name: 'Test Event',
+                    participants: ['Test Performer'],
+                    description: 'This is a test event created at ' + new Date().toLocaleTimeString()
+                };
+                
+                const response = await apiCall('/api/events', {
+                    method: 'POST',
+                    body: JSON.stringify(testEvent)
+                });
+                
+                result.innerHTML = 'Event added successfully:\n' + JSON.stringify(response, null, 2);
+                result.className = 'success';
+                
+                // Also show updated data
+                setTimeout(getAllData, 500);
+            } catch (error) {
+                result.innerHTML = error.message;
+                result.className = 'error';
+            }
+        }
+
+        async function startNextEvent() {
+            const result = document.getElementById('dataResult');
+            try {
+                const response = await apiCall('/api/start-next', {
+                    method: 'POST'
+                });
+                
+                result.innerHTML = 'Event started:\n' + JSON.stringify(response, null, 2);
+                result.className = 'success';
+                
+                // Also show updated data
+                setTimeout(getAllData, 500);
+            } catch (error) {
+                result.innerHTML = error.message;
+                result.className = 'error';
+            }
+        }
+
+        async function runFullTest() {
+            const result = document.getElementById('testResult');
+            result.innerHTML = 'Running full test...\n';
+            
+            try {
+                // Step 1: Check status
+                result.innerHTML += '\n1. Checking API status...\n';
+                const status = await apiCall('/api/status');
+                result.innerHTML += `   Environment: ${status.environment}\n`;
+                result.innerHTML += `   Data file: ${status.dataFile}\n`;
+                result.innerHTML += `   Has cache: ${status.hasMemoryCache}\n`;
+                
+                // Step 2: Get initial data
+                result.innerHTML += '\n2. Getting initial data...\n';
+                const initialData = await apiCall('/api/data');
+                result.innerHTML += `   Events: ${initialData.events.length}\n`;
+                result.innerHTML += `   Current: ${initialData.currentEvent ? 'Yes' : 'No'}\n`;
+                
+                // Step 3: Add test event
+                result.innerHTML += '\n3. Adding test event...\n';
+                const testEvent = {
+                    id: 'debug-test-' + Date.now(),
+                    type: 'performance',
+                    name: 'Debug Test Event',
+                    participants: ['Debug Tester'],
+                    description: 'Test event for debugging data persistence'
+                };
+                
+                await apiCall('/api/events', {
+                    method: 'POST',
+                    body: JSON.stringify(testEvent)
+                });
+                result.innerHTML += '   Event added successfully\n';
+                
+                // Step 4: Verify data was saved
+                result.innerHTML += '\n4. Verifying data persistence...\n';
+                const updatedData = await apiCall('/api/data');
+                result.innerHTML += `   Events after add: ${updatedData.events.length}\n`;
+                
+                // Step 5: Start the event
+                if (updatedData.events.length > 0) {
+                    result.innerHTML += '\n5. Starting next event...\n';
+                    await apiCall('/api/start-next', { method: 'POST' });
+                    
+                    const finalData = await apiCall('/api/data');
+                    result.innerHTML += `   Current event: ${finalData.currentEvent ? finalData.currentEvent.name : 'None'}\n`;
+                    result.innerHTML += `   Remaining events: ${finalData.events.length}\n`;
+                }
+                
+                result.innerHTML += '\n✅ Test completed successfully!\n';
+                result.className = 'success';
+                
+            } catch (error) {
+                result.innerHTML += `\n❌ Test failed: ${error.message}\n`;
+                result.className = 'error';
+            }
+        }
+
+        // Auto-run status check on page load
+        window.addEventListener('load', checkStatus);
+    </script>
+</body>
+</html>
