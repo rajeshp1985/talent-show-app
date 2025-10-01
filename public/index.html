@@ -48,7 +48,47 @@
         <div id="managePage" class="page">
             <div class="manage-header">
                 <h2>🛠️ Manage Items</h2>
-                <button id="addNewEventBtn" class="btn primary">+ Add New Item</button>
+                <div class="manage-actions">
+                    <button id="addNewEventBtn" class="btn primary">+ Add New Item</button>
+                    <button id="importDataBtn" class="btn secondary">📥 Import Data</button>
+                </div>
+            </div>
+
+            <!-- Import Data Modal -->
+            <div id="importModal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>📥 Import Event Data</h3>
+                        <button id="closeImportModal" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Upload a JSON file or paste JSON data to import events into the database.</p>
+                        
+                        <div class="import-options">
+                            <div class="import-option">
+                                <h4>Upload JSON File</h4>
+                                <input type="file" id="importFileInput" accept=".json" class="file-input">
+                                <button id="uploadFileBtn" class="btn secondary">Choose File</button>
+                            </div>
+                            
+                            <div class="import-divider">OR</div>
+                            
+                            <div class="import-option">
+                                <h4>Paste JSON Data</h4>
+                                <textarea id="importTextArea" placeholder="Paste your JSON data here..." rows="10"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="import-preview hidden" id="importPreview">
+                            <h4>Import Preview</h4>
+                            <div id="importStats"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="importBtn" class="btn primary" disabled>Import Data</button>
+                        <button id="cancelImportBtn" class="btn secondary">Cancel</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Add/Edit Item Form -->

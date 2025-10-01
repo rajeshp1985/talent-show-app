@@ -34,7 +34,16 @@ class TalentShowManager {
 
         // Manage page buttons
         document.getElementById('addNewEventBtn').addEventListener('click', () => this.showEventForm());
+        document.getElementById('importDataBtn').addEventListener('click', () => this.showImportModal());
         document.getElementById('cancelFormBtn').addEventListener('click', () => this.hideEventForm());
+
+        // Import modal buttons
+        document.getElementById('closeImportModal').addEventListener('click', () => this.hideImportModal());
+        document.getElementById('cancelImportBtn').addEventListener('click', () => this.hideImportModal());
+        document.getElementById('uploadFileBtn').addEventListener('click', () => document.getElementById('importFileInput').click());
+        document.getElementById('importFileInput').addEventListener('change', (e) => this.handleImportFile(e));
+        document.getElementById('importTextArea').addEventListener('input', (e) => this.handleImportText(e));
+        document.getElementById('importBtn').addEventListener('click', () => this.performImport());
 
         // Form submission
         document.getElementById('eventFormElement').addEventListener('submit', (e) => this.handleFormSubmit(e));
@@ -958,6 +967,169 @@ class TalentShowManager {
         a.download = 'talent-show-data.json';
         a.click();
         URL.revokeObjectURL(url);
+    }
+
+    // Import Modal Management
+    showImportModal() {
+        const modal = document.getElementById('importModal');
+        modal.classList.remove('hidden');
+        this.resetImportModal();
+    }
+
+    hideImportModal() {
+        const modal = document.getElementById('importModal');
+        modal.classList.add('hidden');
+        this.resetImportModal();
+    }
+
+    resetImportModal() {
+        document.getElementById('importFileInput').value = '';
+        document.getElementById('importTextArea').value = '';
+        document.getElementById('importPreview').classList.add('hidden');
+        document.getElementById('importBtn').disabled = true;
+        this.importData = null;
+    }
+
+    // Import File Handling
+    handleImportFile(e) {
+        const file = e.target.files[0];
+        if (file && file.type === 'application/json') {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const jsonData = JSON.parse(event.target.result);
+                    this.processImportData(jsonData);
+                    document.getElementById('importTextArea').value = JSON.stringify(jsonData, null, 2);
+                } catch (error) {
+                    alert('Invalid JSON file: ' + error.message);
+                    this.resetImportModal();
+                }
+            };
+            reader.readAsText(file);
+        } else {
+            alert('Please select a valid JSON file');
+            e.target.value = '';
+        }
+    }
+
+    // Import Text Handling
+    handleImportText(e) {
+        const text = e.target.value.trim();
+        if (text) {
+            try {
+                const jsonData = JSON.parse(text);
+                this.processImportData(jsonData);
+            } catch (error) {
+                // Don't show error while typing, just disable import button
+                document.getElementById('importPreview').classList.add('hidden');
+                document.getElementById('importBtn').disabled = true;
+                this.importData = null;
+            }
+        } else {
+            this.resetImportModal();
+        }
+    }
+
+    // Process Import Data
+    processImportData(jsonData) {
+        try {
+            // Validate the JSON structure
+            if (!jsonData || typeof jsonData !== 'object') {
+                throw new Error('Invalid data format');
+            }
+
+            // Count events and finished events
+            const eventsCount = (jsonData.events && Array.isArray(jsonData.events)) ? jsonData.events.length : 0;
+            const finishedEventsCount = (jsonData.finishedEvents && Array.isArray(jsonData.finishedEvents)) ? jsonData.finishedEvents.length : 0;
+
+            if (eventsCount === 0 && finishedEventsCount === 0) {
+                throw new Error('No events or finished events found in the data');
+            }
+
+            // Store the import data
+            this.importData = jsonData;
+
+            // Show preview
+            const previewDiv = document.getElementById('importPreview');
+            const statsDiv = document.getElementById('importStats');
+            
+            statsDiv.innerHTML = `
+                <div><strong>Events to import:</strong> ${eventsCount}</div>
+                <div><strong>Finished events to import:</strong> ${finishedEventsCount}</div>
+                <div><strong>Current event:</strong> ${jsonData.currentEvent ? 'Yes' : 'None'}</div>
+                <div style="margin-top: 1rem; color: #546e7a; font-size: 0.8rem;">
+                    Note: Duplicate IDs will be skipped during import
+                </div>
+            `;
+            
+            previewDiv.classList.remove('hidden');
+            document.getElementById('importBtn').disabled = false;
+
+        } catch (error) {
+            alert('Invalid import data: ' + error.message);
+            this.resetImportModal();
+        }
+    }
+
+    // Perform Import
+    async performImport() {
+        if (!this.importData) {
+            alert('No data to import');
+            return;
+        }
+
+        try {
+            const importBtn = document.getElementById('importBtn');
+            const originalText = importBtn.textContent;
+            
+            // Show loading state
+            importBtn.disabled = true;
+            importBtn.textContent = 'Importing...';
+
+            // Call the import API
+            const response = await fetch('/api/import', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.importData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Import failed');
+            }
+
+            const result = await response.json();
+            
+            // Show success message
+            const message = `Import completed successfully!\n\n` +
+                `Events added: ${result.stats.eventsAdded}\n` +
+                `Events skipped (duplicates): ${result.stats.eventsSkipped}\n` +
+                `Finished events added: ${result.stats.finishedEventsAdded}\n` +
+                `Finished events skipped (duplicates): ${result.stats.finishedEventsSkipped}\n\n` +
+                `Total events: ${result.stats.totalEvents}\n` +
+                `Total finished events: ${result.stats.totalFinishedEvents}`;
+            
+            alert(message);
+
+            // Refresh the data and UI
+            await this.loadEvents();
+            this.renderHome();
+            this.renderManagePage();
+            
+            // Hide the modal
+            this.hideImportModal();
+
+        } catch (error) {
+            console.error('Import error:', error);
+            alert('Import failed: ' + error.message);
+        } finally {
+            // Reset button state
+            const importBtn = document.getElementById('importBtn');
+            importBtn.disabled = false;
+            importBtn.textContent = 'Import Data';
+        }
     }
 }
 

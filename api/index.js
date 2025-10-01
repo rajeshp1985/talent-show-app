@@ -2,8 +2,6 @@
 // This version uses Redis for persistent data storage
 
 import { createClient } from 'redis';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 
 // Data keys for Redis storage
 const DATA_KEYS = {
@@ -46,196 +44,7 @@ const initializeData = () => ({
   lastUpdated: new Date().toISOString()
 });
 
-// Bootstrap data from events-data.json
-const getBootstrapData = () => {
-  try {
-    // Try multiple possible file paths for different environments
-    const possiblePaths = [
-      join(process.cwd(), 'public', 'data', 'events-data.json'),
-      join(process.cwd(), '..', 'public', 'data', 'events-data.json'),
-      join(__dirname, '..', 'public', 'data', 'events-data.json'),
-      './public/data/events-data.json',
-      '../public/data/events-data.json'
-    ];
-    
-    let fileContent = null;
-    let usedPath = null;
-    
-    for (const filePath of possiblePaths) {
-      try {
-        console.log('Trying to read bootstrap data from:', filePath);
-        fileContent = readFileSync(filePath, 'utf8');
-        usedPath = filePath;
-        break;
-      } catch (err) {
-        console.log('Failed to read from:', filePath, err.message);
-        continue;
-      }
-    }
-    
-    if (!fileContent) {
-      throw new Error('Could not find events-data.json in any expected location');
-    }
-    
-    const jsonData = JSON.parse(fileContent);
-    
-    console.log('Bootstrap data loaded successfully from:', usedPath);
-    console.log('Data stats:', {
-      events: jsonData.events?.length || 0,
-      finishedEvents: jsonData.finishedEvents?.length || 0
-    });
-    
-    return jsonData;
-  } catch (error) {
-    console.error('Error reading events-data.json:', error);
-    console.log('Falling back to hardcoded bootstrap data');
-    
-    // Fallback to hardcoded data if file can't be read
-    return {
-      "events": [
-        {
-          "id": "ITEM1",
-          "type": "event",
-          "description": "Thiruvathira",
-          "name": "Thiruvathira",
-          "participants": [
-            "Punnya Madhavan",
-            "Angel",
-            "Mithula",
-            "Manju",
-            "Rajitha",
-            "Vani",
-            "Divya",
-            "Ambili"
-          ],
-          "photo": "images/Thiruvathira.jpg"
-        },
-        {
-          "id": "ITEM 2",
-          "type": "event",
-          "description": "A spectacular dance from the ladies",
-          "name": "Ladies Dance",
-          "participants": [
-            "Punnya Madhavan",
-            "Jeny",
-            "Angel",
-            "Priya",
-            "Tanu",
-            "Manju",
-            "Divya",
-            "Sherin"
-          ],
-          "photo": "images/ladies-dance.jpg"
-        },
-        {
-          "id": "ITEM 4",
-          "type": "event",
-          "description": "Our little stars",
-          "name": "Little stars",
-          "participants": [
-            "Gabriel Thomas",
-            "Mia Thomas",
-            "Jason Shiju",
-            "Nivin Shyam Chandran",
-            "Nayat Vipin",
-            "Anvay Menon",
-            "Jayden Jubin",
-            "Evlyn Binesh",
-            "Ivaan Nair"
-          ],
-          "photo": "images/our-little-stars.jpg"
-        },
-        {
-          "id": "ITEM 3",
-          "type": "event",
-          "description": "Siblings in action",
-          "name": "Sibiling stars",
-          "participants": [
-            "Nikitha Ramesh",
-            "Advik Ramesh"
-          ],
-          "photo": "images/siblings-action.jpg"
-        },
-        {
-          "id": "ITEM 5",
-          "type": "event",
-          "description": "Girls with an attitude",
-          "name": "Attitude Girls",
-          "participants": [
-            "Gouri Nambiar",
-            "Devika Kottarath",
-            "Riya Pillai",
-            "Evelyn Jibins",
-            "Serah Mercy Shiju"
-          ],
-          "photo": "images/girl-attitude.jpg"
-        }
-      ],
-      "currentEvent": null,
-      "finishedEvents": [
-        {
-          "id": "ITEM 6",
-          "type": "event",
-          "description": "Kantharis",
-          "name": "Kantharis",
-          "participants": [
-            "Sanaa Dattan",
-            "⁠Avanitha Anand Kalaivani"
-          ],
-          "photo": "images/Kantharis.jpg",
-          "finishedAt": "2025-10-01T03:54:56.762Z"
-        }
-      ],
-      "lastUpdated": new Date().toISOString()
-    };
-  }
-};
-
-// Check if database is empty
-const isDatabaseEmpty = async () => {
-  try {
-    const client = await getRedisClient();
-    
-    if (!client) {
-      return true; // Consider empty if Redis not available
-    }
-
-    const [events, currentEvent, finishedEvents] = await Promise.all([
-      client.get(DATA_KEYS.EVENTS),
-      client.get(DATA_KEYS.CURRENT_EVENT),
-      client.get(DATA_KEYS.FINISHED_EVENTS)
-    ]);
-
-    // Database is empty if all key data structures are null/empty
-    const eventsEmpty = !events || JSON.parse(events).length === 0;
-    const currentEventEmpty = !currentEvent;
-    const finishedEventsEmpty = !finishedEvents || JSON.parse(finishedEvents).length === 0;
-
-    return eventsEmpty && currentEventEmpty && finishedEventsEmpty;
-  } catch (error) {
-    console.error('Error checking if database is empty:', error);
-    return true; // Consider empty on error to trigger bootstrap
-  }
-};
-
-// Bootstrap database with initial data
-const bootstrapDatabase = async () => {
-  try {
-    console.log('Bootstrapping database with initial data...');
-    const bootstrapData = getBootstrapData();
-    await writeData(bootstrapData);
-    console.log('Database bootstrapped successfully with', {
-      events: bootstrapData.events.length,
-      finishedEvents: bootstrapData.finishedEvents.length
-    });
-    return bootstrapData;
-  } catch (error) {
-    console.error('Error bootstrapping database:', error);
-    throw error;
-  }
-};
-
-// Read data from Redis store with auto-bootstrap
+// Read data from Redis store
 const readData = async () => {
   try {
     const client = await getRedisClient();
@@ -244,12 +53,6 @@ const readData = async () => {
     if (!client) {
       console.log('Redis not available, using fallback data');
       return initializeData();
-    }
-
-    // Check if database is empty and bootstrap if needed
-    if (await isDatabaseEmpty()) {
-      console.log('Database is empty, bootstrapping with initial data...');
-      return await bootstrapDatabase();
     }
 
     const [events, currentEvent, finishedEvents, lastUpdated] = await Promise.all([
@@ -525,41 +328,90 @@ export default async function handler(req, res) {
       }
     }
 
-    if (path === '/api/bootstrap') {
+    if (path === '/api/import') {
       if (method === 'POST') {
         try {
-          const { force } = req.body;
+          const importData = req.body;
           
-          // Check if database is empty or force bootstrap is requested
-          const isEmpty = await isDatabaseEmpty();
-          
-          if (!isEmpty && !force) {
-            return res.status(400).json({ 
-              error: 'Database is not empty. Use force=true to override existing data.',
-              currentData: await readData()
-            });
+          // Validate the import data structure
+          if (!importData || typeof importData !== 'object') {
+            return res.status(400).json({ error: 'Invalid import data format' });
           }
 
-          const bootstrapData = await bootstrapDatabase();
+          // Get current data
+          const currentData = await readData();
+          
+          // Merge imported data with current data
+          const mergedData = {
+            events: [...(currentData.events || [])],
+            currentEvent: currentData.currentEvent,
+            finishedEvents: [...(currentData.finishedEvents || [])],
+            lastUpdated: new Date().toISOString()
+          };
+
+          // Add imported events
+          if (importData.events && Array.isArray(importData.events)) {
+            const existingIds = [
+              ...mergedData.events.map(e => e.id),
+              ...(mergedData.currentEvent ? [mergedData.currentEvent.id] : []),
+              ...mergedData.finishedEvents.map(e => e.id)
+            ];
+
+            let addedCount = 0;
+            let skippedCount = 0;
+
+            for (const event of importData.events) {
+              if (event.id && !existingIds.includes(event.id)) {
+                mergedData.events.push(event);
+                existingIds.push(event.id);
+                addedCount++;
+              } else {
+                skippedCount++;
+              }
+            }
+          }
+
+          // Add imported finished events
+          if (importData.finishedEvents && Array.isArray(importData.finishedEvents)) {
+            const existingIds = [
+              ...mergedData.events.map(e => e.id),
+              ...(mergedData.currentEvent ? [mergedData.currentEvent.id] : []),
+              ...mergedData.finishedEvents.map(e => e.id)
+            ];
+
+            let addedFinishedCount = 0;
+            let skippedFinishedCount = 0;
+
+            for (const event of importData.finishedEvents) {
+              if (event.id && !existingIds.includes(event.id)) {
+                mergedData.finishedEvents.push(event);
+                existingIds.push(event.id);
+                addedFinishedCount++;
+              } else {
+                skippedFinishedCount++;
+              }
+            }
+          }
+
+          // Save the merged data
+          await writeData(mergedData);
+
           return res.status(200).json({
-            message: 'Database bootstrapped successfully',
-            bootstrapped: true,
-            forced: !!force,
-            data: bootstrapData
+            message: 'Data imported successfully',
+            imported: true,
+            stats: {
+              eventsAdded: addedCount || 0,
+              eventsSkipped: skippedCount || 0,
+              finishedEventsAdded: addedFinishedCount || 0,
+              finishedEventsSkipped: skippedFinishedCount || 0,
+              totalEvents: mergedData.events.length,
+              totalFinishedEvents: mergedData.finishedEvents.length
+            }
           });
         } catch (error) {
-          console.error('Bootstrap error:', error);
-          return res.status(500).json({ error: 'Failed to bootstrap database' });
+          console.error('Import error:', error);
+          return res.status(500).json({ error: 'Failed to import data' });
         }
-      }
-
-      if (method === 'GET') {
-        const isEmpty = await isDatabaseEmpty();
-        return res.status(200).json({
-          databaseEmpty: isEmpty,
-          canBootstrap: isEmpty,
-          bootstrapData: getBootstrapData()
-        });
       }
     }
 
