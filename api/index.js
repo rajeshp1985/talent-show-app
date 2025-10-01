@@ -49,16 +49,38 @@ const initializeData = () => ({
 // Bootstrap data from events-data.json
 const getBootstrapData = () => {
   try {
-    // In Vercel, the file path needs to be relative to the project root
-    const filePath = process.env.VERCEL 
-      ? join(process.cwd(), 'public', 'data', 'events-data.json')
-      : join(process.cwd(), 'public', 'data', 'events-data.json');
+    // Try multiple possible file paths for different environments
+    const possiblePaths = [
+      join(process.cwd(), 'public', 'data', 'events-data.json'),
+      join(process.cwd(), '..', 'public', 'data', 'events-data.json'),
+      join(__dirname, '..', 'public', 'data', 'events-data.json'),
+      './public/data/events-data.json',
+      '../public/data/events-data.json'
+    ];
     
-    console.log('Reading bootstrap data from:', filePath);
-    const fileContent = readFileSync(filePath, 'utf8');
+    let fileContent = null;
+    let usedPath = null;
+    
+    for (const filePath of possiblePaths) {
+      try {
+        console.log('Trying to read bootstrap data from:', filePath);
+        fileContent = readFileSync(filePath, 'utf8');
+        usedPath = filePath;
+        break;
+      } catch (err) {
+        console.log('Failed to read from:', filePath, err.message);
+        continue;
+      }
+    }
+    
+    if (!fileContent) {
+      throw new Error('Could not find events-data.json in any expected location');
+    }
+    
     const jsonData = JSON.parse(fileContent);
     
-    console.log('Bootstrap data loaded successfully:', {
+    console.log('Bootstrap data loaded successfully from:', usedPath);
+    console.log('Data stats:', {
       events: jsonData.events?.length || 0,
       finishedEvents: jsonData.finishedEvents?.length || 0
     });
@@ -66,14 +88,105 @@ const getBootstrapData = () => {
     return jsonData;
   } catch (error) {
     console.error('Error reading events-data.json:', error);
-    console.log('Falling back to empty data structure');
+    console.log('Falling back to hardcoded bootstrap data');
     
-    // Fallback to empty structure if file can't be read
+    // Fallback to hardcoded data if file can't be read
     return {
-      events: [],
-      currentEvent: null,
-      finishedEvents: [],
-      lastUpdated: new Date().toISOString()
+      "events": [
+        {
+          "id": "ITEM1",
+          "type": "event",
+          "description": "Thiruvathira",
+          "name": "Thiruvathira",
+          "participants": [
+            "Punnya Madhavan",
+            "Angel",
+            "Mithula",
+            "Manju",
+            "Rajitha",
+            "Vani",
+            "Divya",
+            "Ambili"
+          ],
+          "photo": "images/Thiruvathira.jpg"
+        },
+        {
+          "id": "ITEM 2",
+          "type": "event",
+          "description": "A spectacular dance from the ladies",
+          "name": "Ladies Dance",
+          "participants": [
+            "Punnya Madhavan",
+            "Jeny",
+            "Angel",
+            "Priya",
+            "Tanu",
+            "Manju",
+            "Divya",
+            "Sherin"
+          ],
+          "photo": "images/ladies-dance.jpg"
+        },
+        {
+          "id": "ITEM 4",
+          "type": "event",
+          "description": "Our little stars",
+          "name": "Little stars",
+          "participants": [
+            "Gabriel Thomas",
+            "Mia Thomas",
+            "Jason Shiju",
+            "Nivin Shyam Chandran",
+            "Nayat Vipin",
+            "Anvay Menon",
+            "Jayden Jubin",
+            "Evlyn Binesh",
+            "Ivaan Nair"
+          ],
+          "photo": "images/our-little-stars.jpg"
+        },
+        {
+          "id": "ITEM 3",
+          "type": "event",
+          "description": "Siblings in action",
+          "name": "Sibiling stars",
+          "participants": [
+            "Nikitha Ramesh",
+            "Advik Ramesh"
+          ],
+          "photo": "images/siblings-action.jpg"
+        },
+        {
+          "id": "ITEM 5",
+          "type": "event",
+          "description": "Girls with an attitude",
+          "name": "Attitude Girls",
+          "participants": [
+            "Gouri Nambiar",
+            "Devika Kottarath",
+            "Riya Pillai",
+            "Evelyn Jibins",
+            "Serah Mercy Shiju"
+          ],
+          "photo": "images/girl-attitude.jpg"
+        }
+      ],
+      "currentEvent": null,
+      "finishedEvents": [
+        {
+          "id": "ITEM 6",
+          "type": "event",
+          "description": "Kantharis",
+          "name": "Kantharis",
+          "participants": [
+            "Sanaa Dattan",
+            "⁠Avanitha Anand Kalaivani"
+          ],
+          "photo": "images/Kantharis.jpg",
+          "finishedAt": "2025-10-01T03:54:56.762Z"
+        }
+      ],
+      "lastUpdated": new Date().toISOString()
     };
   }
 };
