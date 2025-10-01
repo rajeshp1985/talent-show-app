@@ -458,3 +458,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
+// Force deployment - Tue Sep 30 23:58:10 CDT 2025
