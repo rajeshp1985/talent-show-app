@@ -1,51 +1,97 @@
 {
   "events": [
     {
-      "id": "sdc",
+      "id": "ITEM1",
       "type": "event",
-      "description": "dcs",
-      "name": "sdcs",
+      "description": "Thiruvathira",
+      "name": "Thiruvathira",
       "participants": [
-        "dcs"
+        "Punnya Madhavan",
+        "Angel",
+        "Mithula",
+        "Manju",
+        "Rajitha",
+        "Vani",
+        "Divya",
+        "Ambili"
       ],
-      "photo": "https://drive.google.com/file/d/1Q5YbCyEjmmfn8v5UazaO7pxZOo57IAVm/view?usp=drive_link"
+      "photo": "images/Thiruvathira.jpg"
+    },
+    {
+      "id": "ITEM 2",
+      "type": "event",
+      "description": "A spectacular dance from the ladies",
+      "name": "Ladies Dance",
+      "participants": [
+        "Punnya Madhavan",
+        "Jeny",
+        "Angel",
+        "Priya",
+        "Tanu",
+        "Manju",
+        "Divya",
+        "Sherin"
+      ],
+      "photo": "images/ladies-dance.jpg"
+    },
+    {
+      "id": "ITEM 4",
+      "type": "event",
+      "description": "Our little stars",
+      "name": "Little stars",
+      "participants": [
+        "Gabriel Thomas",
+        "Mia Thomas",
+        "Jason Shiju",
+        "Nivin Shyam Chandran",
+        "Nayat Vipin",
+        "Anvay Menon",
+        "Jayden Jubin",
+        "Evlyn Binesh",
+        "Ivaan Nair"
+      ],
+      "photo": "images/our-little-stars.jpg"
+    },
+    {
+      "id": "ITEM 3",
+      "type": "event",
+      "description": "Siblings in action",
+      "name": "Sibiling stars",
+      "participants": [
+        "Nikitha Ramesh",
+        "Advik Ramesh"
+      ],
+      "photo": "images/siblings-action.jpg"
+    },
+    {
+      "id": "ITEM 5",
+      "type": "event",
+      "description": "Girls with an attitude",
+      "name": "Attitude Girls",
+      "participants": [
+        "Gouri Nambiar",
+        "Devika Kottarath",
+        "Riya Pillai",
+        "Evelyn Jibins",
+        "Serah Mercy Shiju"
+      ],
+      "photo": "images/girl-attitude.jpg"
     }
   ],
-  "currentEvent": {
-    "id": "sdc",
-    "type": "event",
-    "description": "dcs",
-    "name": "sdcs",
-    "participants": [
-      "dcs"
-    ],
-    "photo": "https://raw.githubusercontent.com/rajeshp1985/talent-show-app/main/public/images/1.jpeg"
-  },
-  "lastUpdated": "2025-09-29T23:24:59.011Z",
+  "currentEvent": null,
   "finishedEvents": [
     {
-      "id": "test-1",
-      "type": "song",
-      "title": "Test Song",
-      "performer": "Test Artist",
-      "finishedAt": "2025-09-29T23:18:47.167Z"
-    },
-    {
-      "id": "sdfdsf",
-      "type": "announcement",
-      "description": "Announcement",
-      "finishedAt": "2025-09-29T23:21:11.225Z"
-    },
-    {
-      "id": "sdfsd",
+      "id": "ITEM 6",
       "type": "event",
-      "description": "desc3",
-      "name": "Name3",
+      "description": "Kantharis",
+      "name": "Kantharis",
       "participants": [
-        "part3"
+        "Sanaa Dattan",
+        "⁠Avanitha Anand Kalaivani"
       ],
-      "photo": "https://drive.google.com/thumbnail?id=1Dulmxc6cccx5FpecnfI8NF1ftGs1Dlev&sz=w1000",
-      "finishedAt": "2025-09-29T23:24:59.011Z"
+      "photo": "images/Kantharis.jpg",
+      "finishedAt": "2025-10-01T03:54:56.762Z"
     }
-  ]
+  ],
+  "lastUpdated": "2025-10-01T04:11:38.206Z"
 }

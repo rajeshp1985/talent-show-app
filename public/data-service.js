@@ -329,6 +329,53 @@ class TalentShowDataService {
     }
 
     /**
+     * Stop current event and move it back to the top of the queue
+     */
+    async stopCurrentEvent() {
+        if (this.useLocalStorage) {
+            const data = await this.getAllData();
+            
+            if (data.currentEvent || data.currentItem) {
+                const currentEvent = data.currentEvent || data.currentItem;
+                const events = data.events || data.items || [];
+                
+                // Move current event back to the top of the queue
+                events.unshift(currentEvent);
+                
+                data.events = events;
+                data.items = events; // Maintain compatibility
+                data.currentEvent = null;
+                data.currentItem = null; // Maintain compatibility
+                
+                localStorage.setItem('talentShowData', JSON.stringify(data));
+                return { message: 'Current event stopped and moved back to queue' };
+            } else {
+                throw new Error('No current event to stop');
+            }
+        }
+
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/stop-current`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to stop current event');
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('API call failed:', error);
+            this.useLocalStorage = true;
+            return this.stopCurrentEvent();
+        }
+    }
+
+    /**
      * Finish current event
      */
     async finishCurrentEvent() {
@@ -496,24 +543,21 @@ class TalentShowDataService {
             }
         }
 
-        // For API, we need to get all events, reorder them, and update
-        // This is a limitation of the simple API design
         try {
-            const allData = await this.getAllData();
-            const events = allData.events || [];
+            const response = await fetch(`${this.apiBaseUrl}/move-event`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ fromIndex, toIndex })
+            });
             
-            if (fromIndex >= 0 && fromIndex < events.length && toIndex >= 0 && toIndex < events.length) {
-                const event = events.splice(fromIndex, 1)[0];
-                events.splice(toIndex, 0, event);
-                
-                // This would require a bulk update API endpoint
-                // For now, fall back to localStorage for moves
-                console.warn('Event reordering not fully supported via API, using localStorage');
-                this.useLocalStorage = true;
-                return this.moveEvent(fromIndex, toIndex);
-            } else {
-                throw new Error('Invalid move indices');
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to move event');
             }
+            
+            return await response.json();
         } catch (error) {
             console.error('API call failed:', error);
             this.useLocalStorage = true;

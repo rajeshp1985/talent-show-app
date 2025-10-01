@@ -276,6 +276,27 @@ app.post('/api/finish-current', (req, res) => {
   }
 });
 
+app.post('/api/stop-current', (req, res) => {
+  try {
+    const data = readData();
+    
+    if (!data.currentEvent) {
+      return res.status(400).json({ error: 'No current event to stop' });
+    }
+    
+    // Move current event back to the top of the queue
+    data.events.unshift(data.currentEvent);
+    data.currentEvent = null;
+    
+    writeData(data);
+    res.json({ 
+      message: 'Current event stopped and moved back to queue' 
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/api/finished', (req, res) => {
   try {
     const data = readData();
@@ -320,6 +341,42 @@ app.post('/api/restore', (req, res) => {
     writeData(data);
     res.json({ message: 'Event restored successfully' });
   } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/move-event', (req, res) => {
+  try {
+    const { fromIndex, toIndex } = req.body;
+    const data = readData();
+    
+    console.log(`Move request: from ${fromIndex} to ${toIndex}, events length: ${data.events.length}`);
+    
+    if (fromIndex < 0 || fromIndex >= data.events.length) {
+      return res.status(400).json({ 
+        error: `Invalid fromIndex: ${fromIndex} (events length: ${data.events.length})` 
+      });
+    }
+    
+    if (toIndex < 0 || toIndex >= data.events.length) {
+      return res.status(400).json({ 
+        error: `Invalid toIndex: ${toIndex} (events length: ${data.events.length})` 
+      });
+    }
+    
+    if (fromIndex === toIndex) {
+      return res.json({ message: 'No move needed - same position' });
+    }
+    
+    // Move the event
+    const event = data.events.splice(fromIndex, 1)[0];
+    data.events.splice(toIndex, 0, event);
+    
+    console.log(`Event moved successfully from ${fromIndex} to ${toIndex}`);
+    writeData(data);
+    res.json({ message: 'Event moved successfully' });
+  } catch (error) {
+    console.error('Move event error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

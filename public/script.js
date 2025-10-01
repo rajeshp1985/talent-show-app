@@ -245,6 +245,18 @@ class TalentShowManager {
         }
     }
 
+    async stopCurrentItem() {
+        try {
+            await this.dataService.stopCurrentEvent();
+            await this.loadEvents(); // Refresh local data
+            this.renderHome();
+            this.renderManagePage();
+        } catch (error) {
+            console.error('Failed to stop current item:', error);
+            alert('Failed to stop current item: ' + error.message);
+        }
+    }
+
     // Legacy method names for backward compatibility
     addEvent(eventData) {
         this.addItem({...eventData, type: 'event'});
@@ -310,7 +322,7 @@ class TalentShowManager {
                 currentEventCard.innerHTML = `
                     <div class="current-event-content">
                         <div class="event-photo">
-                            <img src="${this.currentItem.photo}" alt="${this.currentItem.name}" onerror="this.src='data:image/svg+xml,%3Csvg width=\'300\' height=\'300\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cdefs%3E%3ClinearGradient id=\'errorBg\' x1=\'0%25\' y1=\'0%25\' x2=\'100%25\' y2=\'100%25\'%3E%3Cstop offset=\'0%25\' style=\'stop-color:%23ff5722;stop-opacity:1\' /%3E%3Cstop offset=\'100%25\' style=\'stop-color:%23d32f2f;stop-opacity:1\' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=\'300\' height=\'300\' fill=\'url(%23errorBg)\'/%3E%3Ccircle cx=\'150\' cy=\'120\' r=\'40\' fill=\'white\' opacity=\'0.8\'/%3E%3Cellipse cx=\'150\' cy=\'220\' rx=\'60\' ry=\'80\' fill=\'white\' opacity=\'0.8\'/%3E%3Ctext x=\'150\' y=\'270\' font-family=\'Arial, sans-serif\' font-size=\'32\' fill=\'white\' text-anchor=\'middle\'%3E❌%3C/text%3E%3C/svg%3E'">
+                            <img src="${this.currentItem.photo}" alt="${this.currentItem.name}" onerror="this.src='images/default.jpg'">
                         </div>
                         <div class="event-details">
                             <h3>${this.currentItem.name}</h3>
@@ -320,6 +332,7 @@ class TalentShowManager {
                             <div class="description">${this.currentItem.description}</div>
                             <div class="mt-1">
                                 <button onclick="talentShow.finishCurrentEvent()" class="btn secondary">Finish Event</button>
+                                <button onclick="talentShow.stopCurrentItem()" class="btn warning" style="margin-left: 0.5rem;">Stop Event</button>
                             </div>
                         </div>
                     </div>
@@ -366,15 +379,23 @@ class TalentShowManager {
         } else {
             upcomingEventsList.innerHTML = this.items.map((item, index) => {
                 if (item.type === 'event') {
+                    const photoUrl = item.photo ? window.imageUrlHandler.processImageUrl(item.photo) : window.imageUrlHandler.getDefaultImage();
                     return `
                         <div class="event-card">
-                            <h3>${item.name}</h3>
-                            <div class="participants">
-                                <strong>Participants:</strong> ${item.participants.join(', ')}
-                            </div>
-                            <div class="description">${item.description}</div>
-                            <div class="mt-1">
-                                <small>Position: ${index + 1}</small>
+                            <div class="event-card-content">
+                                <div class="event-card-thumbnail">
+                                    <img src="${photoUrl}" alt="${item.name}" onerror="this.src='images/default.jpg'">
+                                </div>
+                                <div class="event-card-details">
+                                    <h3>${item.name}</h3>
+                                    <div class="participants">
+                                        <strong>Participants:</strong> ${item.participants.join(', ')}
+                                    </div>
+                                    <div class="description">${item.description}</div>
+                                    <div class="mt-1">
+                                        <small>Position: ${index + 1}</small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -406,48 +427,106 @@ class TalentShowManager {
     renderManagePage() {
         const manageEventsList = document.getElementById('manageEventsList');
         
+        let currentEventHtml = '';
+        
+        // Add current event section if there is one
+        if (this.currentItem) {
+            if (this.currentItem.type === 'event') {
+                currentEventHtml = `
+                    <div class="current-event-section-manage">
+                        <h3>🎪 Currently Running</h3>
+                        <div class="manage-event-item current-running" style="border-left: 4px solid #5e72e4; background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);">
+                            <div class="current-badge">LIVE</div>
+                            <div class="event-info">
+                                <h4>${this.currentItem.name}</h4>
+                                <div class="participants">Participants: ${this.currentItem.participants.join(', ')}</div>
+                                <div class="description">${this.currentItem.description}</div>
+                                <small class="position-info">Currently Running</small>
+                            </div>
+                            <div class="event-actions">
+                                <button onclick="talentShow.finishCurrentEvent()" class="btn small primary">Finish Event</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (this.currentItem.type === 'announcement') {
+                currentEventHtml = `
+                    <div class="current-event-section-manage">
+                        <h3>📢 Currently Running</h3>
+                        <div class="manage-event-item announcement current-running" style="border-left: 4px solid #5e72e4; background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);">
+                            <div class="current-badge">LIVE</div>
+                            <div class="event-info">
+                                <h4><span class="item-type-icon">📢</span>Announcement</h4>
+                                <div class="description">${this.currentItem.description}</div>
+                                <small class="position-info">Currently Running</small>
+                            </div>
+                            <div class="event-actions">
+                                <button onclick="talentShow.finishCurrentEvent()" class="btn small primary">Finish Announcement</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        let upcomingEventsHtml = '';
         if (this.items.length === 0) {
-            manageEventsList.innerHTML = `
+            upcomingEventsHtml = `
                 <div class="no-events">
                     <p>No items to manage</p>
                 </div>
             `;
         } else {
-            manageEventsList.innerHTML = this.items.map((item, index) => {
-                if (item.type === 'event') {
-                    return `
-                        <div class="manage-event-item" draggable="true" data-index="${index}">
-                            <div class="event-info">
-                                <h4>${item.name}</h4>
-                                <div class="participants">Participants: ${item.participants.join(', ')}</div>
-                                <div class="description">${item.description}</div>
-                            </div>
-                            <div class="event-actions">
-                                <button onclick="talentShow.editItem('${item.id}')" class="btn small warning">Edit</button>
-                                <button onclick="talentShow.deleteItemConfirm('${item.id}')" class="btn small danger">Delete</button>
-                                ${index > 0 ? `<button onclick="talentShow.moveItemUp(${index})" class="btn small secondary">↑</button>` : ''}
-                                ${index < this.items.length - 1 ? `<button onclick="talentShow.moveItemDown(${index})" class="btn small secondary">↓</button>` : ''}
-                            </div>
-                        </div>
-                    `;
-                } else if (item.type === 'announcement') {
-                    return `
-                        <div class="manage-event-item announcement" draggable="true" data-index="${index}">
-                            <div class="event-info">
-                                <h4><span class="item-type-icon">📢</span>Announcement</h4>
-                                <div class="description">${item.description}</div>
-                            </div>
-                            <div class="event-actions">
-                                <button onclick="talentShow.editItem('${item.id}')" class="btn small warning">Edit</button>
-                                <button onclick="talentShow.deleteItemConfirm('${item.id}')" class="btn small danger">Delete</button>
-                                ${index > 0 ? `<button onclick="talentShow.moveItemUp(${index})" class="btn small secondary">↑</button>` : ''}
-                                ${index < this.items.length - 1 ? `<button onclick="talentShow.moveItemDown(${index})" class="btn small secondary">↓</button>` : ''}
-                            </div>
-                        </div>
-                    `;
-                }
-            }).join('');
+            upcomingEventsHtml = `
+                <div class="upcoming-events-section-manage">
+                    <h3>📅 Upcoming Items</h3>
+                    ${this.items.map((item, index) => {
+                        if (item.type === 'event') {
+                            const photoUrl = item.photo ? window.imageUrlHandler.processImageUrl(item.photo) : window.imageUrlHandler.getDefaultImage();
+                            return `
+                                <div class="manage-event-item" draggable="true" data-index="${index}">
+                                    <div class="position-number">${index + 1}</div>
+                                    <div class="event-thumbnail">
+                                        <img src="${photoUrl}" alt="${item.name}" onerror="this.src='images/default.jpg'">
+                                    </div>
+                                    <div class="event-info">
+                                        <h4>${item.name}</h4>
+                                        <div class="participants">Participants: ${item.participants.join(', ')}</div>
+                                        <div class="description">${item.description}</div>
+                                        <small class="position-info">Position: ${index + 1}</small>
+                                    </div>
+                                    <div class="event-actions">
+                                        <button onclick="talentShow.editItem('${item.id}')" class="btn small warning">Edit</button>
+                                        <button onclick="talentShow.deleteItemConfirm('${item.id}')" class="btn small danger">Delete</button>
+                                        ${index > 0 ? `<button onclick="talentShow.moveItemUp(${index})" class="btn small secondary">↑</button>` : ''}
+                                        ${index < this.items.length - 1 ? `<button onclick="talentShow.moveItemDown(${index})" class="btn small secondary">↓</button>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        } else if (item.type === 'announcement') {
+                            return `
+                                <div class="manage-event-item announcement" draggable="true" data-index="${index}">
+                                    <div class="position-number">${index + 1}</div>
+                                    <div class="event-info">
+                                        <h4><span class="item-type-icon">📢</span>Announcement</h4>
+                                        <div class="description">${item.description}</div>
+                                        <small class="position-info">Position: ${index + 1}</small>
+                                    </div>
+                                    <div class="event-actions">
+                                        <button onclick="talentShow.editItem('${item.id}')" class="btn small warning">Edit</button>
+                                        <button onclick="talentShow.deleteItemConfirm('${item.id}')" class="btn small danger">Delete</button>
+                                        ${index > 0 ? `<button onclick="talentShow.moveItemUp(${index})" class="btn small secondary">↑</button>` : ''}
+                                        ${index < this.items.length - 1 ? `<button onclick="talentShow.moveItemDown(${index})" class="btn small secondary">↓</button>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }).join('')}
+                </div>
+            `;
         }
+        
+        manageEventsList.innerHTML = currentEventHtml + upcomingEventsHtml;
         
         this.setupDragAndDrop();
         this.renderFinishedItems();
@@ -747,19 +826,45 @@ class TalentShowManager {
         }
     }
 
-    moveItemUp(index) {
+    async moveItemUp(index) {
         if (index > 0) {
-            this.moveItem(index, index - 1);
-            this.renderManagePage();
-            this.renderHome();
+            try {
+                // Refresh data first to ensure we have the latest state
+                await this.loadEvents();
+                
+                // Validate index after refresh
+                if (index >= this.items.length) {
+                    throw new Error('Item index out of range after data refresh');
+                }
+                
+                await this.moveItem(index, index - 1);
+                this.renderManagePage();
+                this.renderHome();
+            } catch (error) {
+                console.error('Failed to move item up:', error);
+                alert('Failed to move item up: ' + error.message);
+            }
         }
     }
 
-    moveItemDown(index) {
+    async moveItemDown(index) {
         if (index < this.items.length - 1) {
-            this.moveItem(index, index + 1);
-            this.renderManagePage();
-            this.renderHome();
+            try {
+                // Refresh data first to ensure we have the latest state
+                await this.loadEvents();
+                
+                // Validate index after refresh
+                if (index >= this.items.length) {
+                    throw new Error('Item index out of range after data refresh');
+                }
+                
+                await this.moveItem(index, index + 1);
+                this.renderManagePage();
+                this.renderHome();
+            } catch (error) {
+                console.error('Failed to move item down:', error);
+                alert('Failed to move item down: ' + error.message);
+            }
         }
     }
 
@@ -802,7 +907,7 @@ class TalentShowManager {
         e.target.closest('.manage-event-item')?.classList.add('drag-over');
     }
 
-    handleDrop(e) {
+    async handleDrop(e) {
         e.preventDefault();
         const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
         const toElement = e.target.closest('.manage-event-item');
@@ -810,9 +915,14 @@ class TalentShowManager {
         if (toElement) {
             const toIndex = parseInt(toElement.dataset.index);
             if (fromIndex !== toIndex) {
-                this.moveEvent(fromIndex, toIndex);
-                this.renderManagePage();
-                this.renderHome();
+                try {
+                    await this.moveItem(fromIndex, toIndex);
+                    this.renderManagePage();
+                    this.renderHome();
+                } catch (error) {
+                    console.error('Failed to move item via drag and drop:', error);
+                    alert('Failed to move item: ' + error.message);
+                }
             }
         }
     }

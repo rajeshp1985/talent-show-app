@@ -42,13 +42,8 @@ class ImageUrlHandler {
         }
 
         // If it's a relative URL, make it absolute
-        if (url.startsWith('/') || url.startsWith('./')) {
+        if (url.startsWith('/') || url.startsWith('./') || (!url.startsWith('http://') && !url.startsWith('https://') && !url.includes('://'))) {
             return new URL(url, window.location.origin).href;
-        }
-
-        // If it doesn't start with http/https, add https
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            url = 'https://' + url;
         }
 
         try {
@@ -198,7 +193,7 @@ class ImageUrlHandler {
      * Get default placeholder image
      */
     getDefaultImage() {
-        return "data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='defaultBg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234caf50;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23388e3c;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='300' fill='url(%23defaultBg)'/%3E%3Ccircle cx='150' cy='120' r='40' fill='white' opacity='0.8'/%3E%3Cellipse cx='150' cy='220' rx='60' ry='80' fill='white' opacity='0.8'/%3E%3Ctext x='150' y='270' font-family='Arial, sans-serif' font-size='32' fill='white' text-anchor='middle'%3E🎪%3C/text%3E%3C/svg%3E";
+        return "images/default.jpg";
     }
 
     /**

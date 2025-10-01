@@ -267,6 +267,25 @@ export default async function handler(req, res) {
       }
     }
 
+    if (path === '/api/stop-current') {
+      if (method === 'POST') {
+        const data = await readData();
+
+        if (!data.currentEvent) {
+          return res.status(400).json({ error: 'No current event to stop' });
+        }
+
+        // Move current event back to the top of the queue
+        data.events.unshift(data.currentEvent);
+        data.currentEvent = null;
+
+        await writeData(data);
+        return res.status(200).json({
+          message: 'Current event stopped and moved back to queue'
+        });
+      }
+    }
+
     if (path === '/api/finished') {
       const data = await readData();
       if (method === 'GET') {
