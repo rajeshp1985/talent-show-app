@@ -1,40 +1,6 @@
 {
   "events": [
     {
-      "id": "ITEM1",
-      "type": "event",
-      "description": "Thiruvathira",
-      "name": "Thiruvathira",
-      "participants": [
-        "Punnya Madhavan",
-        "Angel",
-        "Mithula",
-        "Manju",
-        "Rajitha",
-        "Vani",
-        "Divya",
-        "Ambili"
-      ],
-      "photo": "images/Thiruvathira.jpg"
-    },
-    {
-      "id": "ITEM 2",
-      "type": "event",
-      "description": "A spectacular dance from the ladies",
-      "name": "Ladies Dance",
-      "participants": [
-        "Punnya Madhavan",
-        "Jeny",
-        "Angel",
-        "Priya",
-        "Tanu",
-        "Manju",
-        "Divya",
-        "Sherin"
-      ],
-      "photo": "images/ladies-dance.jpg"
-    },
-    {
       "id": "ITEM 4",
       "type": "event",
       "description": "Our little stars",
@@ -78,7 +44,23 @@
       "photo": "images/girl-attitude.jpg"
     }
   ],
-  "currentEvent": null,
+  "currentEvent": {
+    "id": "ITEM 2",
+    "type": "event",
+    "description": "A spectacular dance from the ladies",
+    "name": "Ladies Dance",
+    "participants": [
+      "Punnya Madhavan",
+      "Jeny",
+      "Angel",
+      "Priya",
+      "Tanu",
+      "Manju",
+      "Divya",
+      "Sherin"
+    ],
+    "photo": "images/ladies-dance.jpg"
+  },
   "finishedEvents": [
     {
       "id": "ITEM 6",
@@ -91,7 +73,25 @@
       ],
       "photo": "images/Kantharis.jpg",
       "finishedAt": "2025-10-01T03:54:56.762Z"
+    },
+    {
+      "id": "ITEM1",
+      "type": "event",
+      "description": "Thiruvathira",
+      "name": "Thiruvathira",
+      "participants": [
+        "Punnya Madhavan",
+        "Angel",
+        "Mithula",
+        "Manju",
+        "Rajitha",
+        "Vani",
+        "Divya",
+        "Ambili"
+      ],
+      "photo": "images/Thiruvathira.jpg",
+      "finishedAt": "2025-10-01T05:16:58.846Z"
     }
   ],
-  "lastUpdated": "2025-10-01T04:11:38.206Z"
+  "lastUpdated": "2025-10-01T05:16:58.846Z"
 }

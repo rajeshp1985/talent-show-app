@@ -544,7 +544,7 @@ class TalentShowDataService {
         }
 
         try {
-            const response = await fetch(`${this.apiBaseUrl}/move-event`, {
+            const response = await fetch(`${this.apiBaseUrl}/move`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
