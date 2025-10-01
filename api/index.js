@@ -2,6 +2,8 @@
 // This version uses Redis for persistent data storage
 
 import { createClient } from 'redis';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 // Data keys for Redis storage
 const DATA_KEYS = {
@@ -44,7 +46,83 @@ const initializeData = () => ({
   lastUpdated: new Date().toISOString()
 });
 
-// Read data from Redis store
+// Bootstrap data from events-data.json
+const getBootstrapData = () => {
+  try {
+    // In Vercel, the file path needs to be relative to the project root
+    const filePath = process.env.VERCEL 
+      ? join(process.cwd(), 'public', 'data', 'events-data.json')
+      : join(process.cwd(), 'public', 'data', 'events-data.json');
+    
+    console.log('Reading bootstrap data from:', filePath);
+    const fileContent = readFileSync(filePath, 'utf8');
+    const jsonData = JSON.parse(fileContent);
+    
+    console.log('Bootstrap data loaded successfully:', {
+      events: jsonData.events?.length || 0,
+      finishedEvents: jsonData.finishedEvents?.length || 0
+    });
+    
+    return jsonData;
+  } catch (error) {
+    console.error('Error reading events-data.json:', error);
+    console.log('Falling back to empty data structure');
+    
+    // Fallback to empty structure if file can't be read
+    return {
+      events: [],
+      currentEvent: null,
+      finishedEvents: [],
+      lastUpdated: new Date().toISOString()
+    };
+  }
+};
+
+// Check if database is empty
+const isDatabaseEmpty = async () => {
+  try {
+    const client = await getRedisClient();
+    
+    if (!client) {
+      return true; // Consider empty if Redis not available
+    }
+
+    const [events, currentEvent, finishedEvents] = await Promise.all([
+      client.get(DATA_KEYS.EVENTS),
+      client.get(DATA_KEYS.CURRENT_EVENT),
+      client.get(DATA_KEYS.FINISHED_EVENTS)
+    ]);
+
+    // Database is empty if all key data structures are null/empty
+    const eventsEmpty = !events || JSON.parse(events).length === 0;
+    const currentEventEmpty = !currentEvent;
+    const finishedEventsEmpty = !finishedEvents || JSON.parse(finishedEvents).length === 0;
+
+    return eventsEmpty && currentEventEmpty && finishedEventsEmpty;
+  } catch (error) {
+    console.error('Error checking if database is empty:', error);
+    return true; // Consider empty on error to trigger bootstrap
+  }
+};
+
+// Bootstrap database with initial data
+const bootstrapDatabase = async () => {
+  try {
+    console.log('Bootstrapping database with initial data...');
+    const bootstrapData = getBootstrapData();
+    await writeData(bootstrapData);
+    console.log('Database bootstrapped successfully with', {
+      events: bootstrapData.events.length,
+      finishedEvents: bootstrapData.finishedEvents.length
+    });
+    return bootstrapData;
+  } catch (error) {
+    console.error('Error bootstrapping database:', error);
+    throw error;
+  }
+};
+
+// Read data from Redis store with auto-bootstrap
 const readData = async () => {
   try {
     const client = await getRedisClient();
@@ -53,6 +131,12 @@ const readData = async () => {
     if (!client) {
       console.log('Redis not available, using fallback data');
       return initializeData();
+    }
+
+    // Check if database is empty and bootstrap if needed
+    if (await isDatabaseEmpty()) {
+      console.log('Database is empty, bootstrapping with initial data...');
+      return await bootstrapDatabase();
     }
 
     const [events, currentEvent, finishedEvents, lastUpdated] = await Promise.all([
@@ -325,6 +409,44 @@ export default async function handler(req, res) {
         data.events.push(eventToRestore);
         await writeData(data);
         return res.status(200).json({ message: 'Event restored successfully' });
+      }
+    }
+
+    if (path === '/api/bootstrap') {
+      if (method === 'POST') {
+        try {
+          const { force } = req.body;
+          
+          // Check if database is empty or force bootstrap is requested
+          const isEmpty = await isDatabaseEmpty();
+          
+          if (!isEmpty && !force) {
+            return res.status(400).json({ 
+              error: 'Database is not empty. Use force=true to override existing data.',
+              currentData: await readData()
+            });
+          }
+
+          const bootstrapData = await bootstrapDatabase();
+          return res.status(200).json({
+            message: 'Database bootstrapped successfully',
+            bootstrapped: true,
+            forced: !!force,
+            data: bootstrapData
+          });
+        } catch (error) {
+          console.error('Bootstrap error:', error);
+          return res.status(500).json({ error: 'Failed to bootstrap database' });
+        }
+      }
+
+      if (method === 'GET') {
+        const isEmpty = await isDatabaseEmpty();
+        return res.status(200).json({
+          databaseEmpty: isEmpty,
+          canBootstrap: isEmpty,
+          bootstrapData: getBootstrapData()
+        });
       }
     }
 
