@@ -328,6 +328,37 @@ export default async function handler(req, res) {
       }
     }
 
+    if (path === '/api/move') {
+      if (method === 'POST') {
+        const { fromIndex, toIndex } = req.body;
+        
+        if (typeof fromIndex !== 'number' || typeof toIndex !== 'number') {
+          return res.status(400).json({ error: 'Invalid move parameters: fromIndex and toIndex must be numbers' });
+        }
+        
+        const data = await readData();
+        
+        if (fromIndex < 0 || fromIndex >= data.events.length || toIndex < 0 || toIndex >= data.events.length) {
+          return res.status(400).json({ error: 'Move indices out of range' });
+        }
+        
+        if (fromIndex === toIndex) {
+          return res.status(200).json({ message: 'No move needed' });
+        }
+        
+        // Move the item
+        const [movedItem] = data.events.splice(fromIndex, 1);
+        data.events.splice(toIndex, 0, movedItem);
+        
+        await writeData(data);
+        return res.status(200).json({ 
+          message: 'Event moved successfully',
+          fromIndex,
+          toIndex
+        });
+      }
+    }
+
     if (path === '/api/import') {
       if (method === 'POST') {
         try {
