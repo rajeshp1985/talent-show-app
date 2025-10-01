@@ -836,16 +836,8 @@ class TalentShowManager {
     }
 
     async moveItemUp(index) {
-        if (index > 0) {
+        if (index > 0 && index < this.items.length) {
             try {
-                // Refresh data first to ensure we have the latest state
-                await this.loadEvents();
-                
-                // Validate index after refresh
-                if (index >= this.items.length) {
-                    throw new Error('Item index out of range after data refresh');
-                }
-                
                 await this.moveItem(index, index - 1);
                 this.renderManagePage();
                 this.renderHome();
@@ -857,16 +849,8 @@ class TalentShowManager {
     }
 
     async moveItemDown(index) {
-        if (index < this.items.length - 1) {
+        if (index >= 0 && index < this.items.length - 1) {
             try {
-                // Refresh data first to ensure we have the latest state
-                await this.loadEvents();
-                
-                // Validate index after refresh
-                if (index >= this.items.length) {
-                    throw new Error('Item index out of range after data refresh');
-                }
-                
                 await this.moveItem(index, index + 1);
                 this.renderManagePage();
                 this.renderHome();
