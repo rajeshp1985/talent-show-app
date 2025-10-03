@@ -80,7 +80,7 @@
         /* Vibrant header */
         header {
             text-align: center;
-            padding: 2rem 0;
+            padding: 1rem 0;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
             backdrop-filter: blur(20px);
             border-bottom: 4px solid #ff6b6b;
@@ -107,7 +107,7 @@
         
         header h1 {
             font-family: 'Fredoka One', cursive;
-            font-size: 4rem;
+            font-size: 3rem;
             font-weight: 400;
             background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
             background-size: 300% 300%;
@@ -152,22 +152,38 @@
         
         .projection-layout {
             display: flex;
+            flex-direction: row;
+            padding: 1rem;
+            height: calc(100vh - 2rem);
+            max-width: 100%;
+            margin: 0;
+            gap: 1rem;
+        }
+
+        .photo-section {
+            flex: 0 0 62.5%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .details-section {
+            flex: 0 0 37.5%;
+            display: flex;
             flex-direction: column;
-            padding: 2rem;
-            min-height: calc(100vh - 120px);
-            max-width: 1600px;
-            margin: 0 auto;
+            gap: 1rem;
         }
 
-        .current-event-section {
+        .current-event-details {
             flex: 1;
-            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .upcoming-section {
-            flex: 0 0 auto;
-            max-height: 10vh;
-            margin-top: 1rem;
+        .upcoming-event-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .projection-section h2 {
@@ -440,19 +456,10 @@
             display: block;
         }
         
-        /* Photo-focused display - photo takes 70-80% of space */
-        .event-photo-projection {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            height: 100%;
-            justify-content: center;
-        }
-        
-        .event-photo-projection img {
-            max-width: 80%;
-            max-height: 50vh;
+        /* Photo section styling */
+        .photo-section img {
+            max-width: 98%;
+            max-height: 95vh;
             width: auto;
             height: auto;
             border-radius: 20px;
@@ -467,7 +474,7 @@
             background: rgba(255, 255, 255, 0.9);
         }
 
-        .event-photo-projection img:hover {
+        .photo-section img:hover {
             transform: scale(1.02) rotate(0.5deg);
             border-color: #feca57;
             box-shadow: 
@@ -476,11 +483,56 @@
                 0 0 50px rgba(254, 202, 87, 0.4);
         }
 
-        .event-photo-projection .event-details {
+        /* Details section styling */
+        .details-section h2 {
+            font-family: 'Dancing Script', cursive;
+            font-weight: 700;
+            background: linear-gradient(45deg, #2c2c54, #40407a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-align: center;
-            width: 100%;
-            flex: 0 0 auto;
-            padding: 0.5rem;
+            position: relative;
+            text-shadow: 0 2px 10px rgba(44, 44, 84, 0.2);
+        }
+
+        .details-section .projection-event-card {
+            padding: 2rem;
+            font-size: 1.1rem;
+            justify-content: flex-start;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .details-section .projection-event-card h3 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.2rem;
+            color: #2c2c54;
+            background: none;
+            -webkit-text-fill-color: #2c2c54;
+            text-shadow: none;
+            text-align: left;
+            line-height: 1.1;
+        }
+
+        .details-section .projection-event-card .participants {
+            font-size: 2.45rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2c5aa0;
+            background: none;
+            -webkit-text-fill-color: #2c5aa0;
+            text-align: left;
+        }
+
+        .details-section .projection-event-card .description {
+            font-size: 1.1rem;
+            padding: 1rem;
+            color: #2c2c54;
+            background: rgba(255, 255, 255, 0.9);
+            text-align: left;
+            line-height: 1.4;
         }
 
         /* Fun loading animation */
@@ -596,25 +648,35 @@
     
     <main>
         <div class="projection-layout">
-            <!-- Current Event - Full Screen -->
-            <div class="projection-section current-event-section">
-                <h2>✨ Now on Stage ✨</h2>
-                <div id="projectionCurrentEvent" class="projection-event-card">
+            <!-- Left Section - Photo (70%) -->
+            <div class="photo-section">
+                <div id="projectionPhoto">
                     <div class="projection-no-event">
                         <div class="loading-spinner"></div>
                         <p>🎭 Getting Ready! 🎭</p>
-                        <p>The next amazing performance is about to begin!</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Compact Upcoming Section -->
-            <div class="projection-section upcoming-section">
-                <h2>🎪 Coming Up Next 🎪</h2>
-                <div id="projectionUpcomingEvents" class="upcoming-events-projection">
-                    <div class="projection-no-event">
-                        <div class="loading-spinner"></div>
-                        <p>🌈 Loading the lineup... 🌈</p>
+            <!-- Right Section - Details (30%) -->
+            <div class="details-section">
+                <!-- Current Event Details (Top Half) -->
+                <div class="current-event-details">
+                    <h2 style="font-size: 3.4rem; font-weight: bold; margin-bottom: 1rem;">✨ Now on Stage ✨</h2>
+                    <div id="projectionCurrentDetails" class="projection-event-card">
+                        <div class="projection-no-event">
+                            <p>Loading current event...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Event Details (Bottom Half) -->
+                <div class="upcoming-event-details">
+                    <h2 style="font-size: 3.4rem; font-weight: bold; margin-bottom: 1rem;">🎪 Coming Up Next 🎪</h2>
+                    <div id="projectionUpcomingDetails" class="projection-event-card">
+                        <div class="projection-no-event">
+                            <p>Loading upcoming event...</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -623,8 +685,9 @@
 
     <script>
         async function loadAndDisplayData() {
-            const currentContainer = document.getElementById('projectionCurrentEvent');
-            const upcomingContainer = document.getElementById('projectionUpcomingEvents');
+            const photoContainer = document.getElementById('projectionPhoto');
+            const currentDetailsContainer = document.getElementById('projectionCurrentDetails');
+            const upcomingDetailsContainer = document.getElementById('projectionUpcomingDetails');
             
             try {
                 console.log('Loading data from API...');
@@ -640,18 +703,28 @@
                 const events = data.events || [];
                 const currentEvent = data.currentEvent || null;
                 
-                // Render current event
+                // Render current event photo and details
                 if (!currentEvent) {
-                    currentContainer.innerHTML = `
+                    photoContainer.innerHTML = `
                         <div class="projection-no-event fade-in">
+                            <div class="loading-spinner"></div>
                             <p>🎭 The stage awaits! 🎭</p>
-                            <p>Get ready for the next spectacular performance!</p>
+                        </div>
+                    `;
+                    currentDetailsContainer.innerHTML = `
+                        <div class="projection-no-event">
+                            <p>🎭 Getting Ready! 🎭</p>
                         </div>
                     `;
                 } else if (currentEvent.type === 'announcement') {
-                    currentContainer.innerHTML = `
+                    photoContainer.innerHTML = `
                         <div class="projection-announcement-banner fade-in">                            
                             <div class="announcement-text">${escapeHtml(currentEvent.description)}</div>
+                        </div>
+                    `;
+                    currentDetailsContainer.innerHTML = `
+                        <div class="fade-in">
+                            <h3>📢 Announcement</h3>
                         </div>
                     `;
                 } else {
@@ -691,20 +764,18 @@
                     console.log('Image debug:', debugInfo);
                     console.log('Final image src:', imageSrc);
                     
-                    const photoHtml = `<img src="${imageSrc}" alt="${escapeHtml(participantsText)}" 
-                        onload="console.log('✅ Image loaded successfully:', '${imageSrc}')" 
-                        onerror="console.log('❌ Image failed to load:', '${imageSrc}'); this.src='${getDefaultAvatar()}';">`;
+                    // Display photo in left section
+                    photoContainer.innerHTML = `
+                        <img src="${imageSrc}" alt="${escapeHtml(participantsText)}" class="fade-in"
+                            onload="console.log('✅ Image loaded successfully:', '${imageSrc}')" 
+                            onerror="console.log('❌ Image failed to load:', '${imageSrc}'); this.src='${getDefaultAvatar()}';">
+                    `;
 
-                    currentContainer.innerHTML = `
+                    // Display details in right section
+                    currentDetailsContainer.innerHTML = `
                         <div class="fade-in">
-                            <div class="event-photo-projection">
-                                ${photoHtml}
-                                <div class="event-details">
-                                    <h3>🎪 ${escapeHtml(currentEvent.name || 'Spectacular Performance')} 🎪</h3>
-                                    <div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(participantsText)}</div>
-                                </div>
-                            </div>
-                            <div class="description">🌟 ${escapeHtml(currentEvent.description || 'An amazing performance that will leave you speechless!')} 🌟</div>
+                            <h3>🎪 ${escapeHtml(currentEvent.name || 'Spectacular Performance')}</h3>
+                            <div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(participantsText)}</div>
                         </div>
                     `;
                 }
@@ -715,45 +786,51 @@
                     upcomingEvents = events.filter(event => event.id !== currentEvent.id);
                 }
                 
-                // Render upcoming events - show only the first one with just the name
+                // Render upcoming event details
                 if (upcomingEvents.length === 0) {
-                    upcomingContainer.innerHTML = `
+                    upcomingDetailsContainer.innerHTML = `
                         <div class="projection-no-event fade-in">
                             <p>🎉 What a show! 🎉</p>
                         </div>
                     `;
                 } else {
-                    // Show only the first upcoming event with just the name
+                    // Show only the first upcoming event
                     const nextEvent = upcomingEvents[0];
-                    let upcomingHtml = '';
+                    const nextParticipants = nextEvent.participants || [];
+                    const nextParticipantsText = nextParticipants.length > 0 ? nextParticipants.join(', ') : 'Amazing Performer';
                     
                     if (nextEvent.type === 'announcement') {
-                        upcomingHtml = `
-                            <div class="projection-upcoming-item fade-in">
-                                <h4>📢 ${escapeHtml(nextEvent.description)}</h4>
+                        upcomingDetailsContainer.innerHTML = `
+                            <div class="fade-in">
+                                <h3>📢 Announcement</h3>
                             </div>
                         `;
                     } else {
-                        upcomingHtml = `
-                            <div class="projection-upcoming-item fade-in">
-                                <h4>🎭 ${escapeHtml(nextEvent.name || 'Spectacular Act')}</h4>
+                        upcomingDetailsContainer.innerHTML = `
+                            <div class="fade-in">
+                                <h3>🎭 ${escapeHtml(nextEvent.name || 'Spectacular Act')}</h3>
+                                <div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(nextParticipantsText)}</div>
                             </div>
                         `;
                     }
-
-                    upcomingContainer.innerHTML = upcomingHtml;
                 }
                 
             } catch (error) {
                 console.error('Error loading data:', error);
-                currentContainer.innerHTML = `
+                photoContainer.innerHTML = `
                     <div class="projection-no-event">
-                        <p>🎭 Oops! Something went wrong 🎭</p>
-                        <p>Please check the connection and try again</p>
+                        <div class="loading-spinner"></div>
+                        <p>🎭 Connection Error 🎭</p>
                     </div>
                 `;
                 
-                upcomingContainer.innerHTML = `
+                currentDetailsContainer.innerHTML = `
+                    <div class="projection-no-event">
+                        <p>🎭 Oops! Something went wrong 🎭</p>
+                    </div>
+                `;
+                
+                upcomingDetailsContainer.innerHTML = `
                     <div class="projection-no-event">
                         <p>🌈 Unable to load upcoming acts 🌈</p>
                     </div>
