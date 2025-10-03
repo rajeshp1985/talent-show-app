@@ -19,9 +19,9 @@
                 linear-gradient(135deg, #d63031 0%, #e17055 25%, #0984e3 50%, #a29bfe 75%, #6c5ce7 100%);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
-            min-height: 100vh;
+            height: 100vh;
             position: relative;
-            overflow-x: hidden;
+            overflow: hidden;
             color: #2d3436;
         }
 
@@ -151,13 +151,23 @@
         }
         
         .projection-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            padding: 3rem;
-            min-height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            min-height: calc(100vh - 120px);
             max-width: 1600px;
             margin: 0 auto;
+        }
+
+        .current-event-section {
+            flex: 1;
+            min-height: 85vh;
+        }
+
+        .upcoming-section {
+            flex: 0 0 auto;
+            max-height: 10vh;
+            margin-top: 1rem;
         }
         
         .projection-section h2 {
@@ -172,6 +182,11 @@
             margin-bottom: 2rem;
             position: relative;
             text-shadow: 0 2px 10px rgba(44, 44, 84, 0.2);
+        }
+
+        .upcoming-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .projection-section h2::after {
@@ -206,7 +221,7 @@
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateY(0);
-            min-height: 85vh;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -238,9 +253,9 @@
         
         .projection-event-card h3 {
             font-family: 'Poppins', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
             background: linear-gradient(45deg, #2c2c54, #40407a, #706fd3);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -251,9 +266,9 @@
         }
         
         .projection-event-card .participants {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
             color: #ff6b6b;
             text-align: center;
             background: linear-gradient(45deg, #ff6b6b, #ff9ff3);
@@ -263,15 +278,16 @@
         }
         
         .projection-event-card .description {
-            font-size: 1.1rem;
-            line-height: 1.7;
+            font-size: 0.9rem;
+            line-height: 1.4;
             color: #2c2c54;
             text-align: center;
-            font-weight: 500;
+            font-weight: 400;
             background: rgba(255, 255, 255, 0.8);
-            padding: 1.5rem;
-            border-radius: 20px;
+            padding: 0.75rem;
+            border-radius: 15px;
             border: 2px solid rgba(255, 107, 107, 0.2);
+            margin-top: 0.5rem;
         }
         
         .projection-no-event {
@@ -292,41 +308,27 @@
             font-weight: 700;
         }
         
-        /* Bright upcoming events */
+        /* Compact upcoming events - no scroll */
         .upcoming-events-projection {
-            max-height: 75vh;
-            overflow-y: auto;
-            padding-right: 15px;
-        }
-        
-        .upcoming-events-projection::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .upcoming-events-projection::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-        }
-        
-        .upcoming-events-projection::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #ff6b6b, #ff9ff3);
-            border-radius: 4px;
-        }
-
-        .upcoming-events-projection::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #ff5252, #ff6ec7);
+            height: 8vh;
+            overflow: hidden;
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .projection-upcoming-item {
             background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
-            border: 3px solid rgba(214, 48, 49, 0.5);
-            border-radius: 25px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+            border: 2px solid rgba(214, 48, 49, 0.5);
+            border-radius: 15px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
             position: relative;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
+            text-align: center;
         }
 
         .projection-upcoming-item::before {
@@ -348,55 +350,16 @@
         
         .projection-upcoming-item h4 {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
             background: linear-gradient(45deg, #2c2c54, #40407a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            position: relative;
-            padding-left: 3rem;
-        }
-
-        .projection-upcoming-item h4::before {
-            content: counter(item-counter);
-            counter-increment: item-counter;
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-        }
-
-        .upcoming-events-projection {
-            counter-reset: item-counter;
-        }
-        
-        .projection-upcoming-item .participants {
-            font-size: 1.1rem;
-            color: #ff6b6b;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            padding-left: 3rem;
-        }
-        
-        .projection-upcoming-item .description {
-            font-size: 1rem;
-            color: #2c2c54;
-            line-height: 1.6;
-            padding-left: 3rem;
-            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         /* Bright announcement styles */
@@ -477,19 +440,19 @@
             display: block;
         }
         
-        /* Bright photo display - optimized for larger size */
+        /* Photo-focused display - photo takes 70-80% of space */
         .event-photo-projection {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
+            gap: 1rem;
+            height: 100%;
             justify-content: center;
         }
         
         .event-photo-projection img {
-            max-width: 450px;
-            max-height: 320px;
+            max-width: 80%;
+            max-height: 50vh;
             width: auto;
             height: auto;
             border-radius: 20px;
@@ -505,7 +468,7 @@
         }
 
         .event-photo-projection img:hover {
-            transform: scale(1.03) rotate(1deg);
+            transform: scale(1.02) rotate(0.5deg);
             border-color: #feca57;
             box-shadow: 
                 0 30px 60px rgba(254, 202, 87, 0.5),
@@ -516,6 +479,8 @@
         .event-photo-projection .event-details {
             text-align: center;
             width: 100%;
+            flex: 0 0 auto;
+            padding: 0.5rem;
         }
 
         /* Fun loading animation */
@@ -629,14 +594,10 @@
 <body>
     <div class="status-indicator" title="🔴 LIVE - Talent Show in Progress!"></div>
     
-    <header>
-        <h1>🌟 PROSPER ONAM 🌟</h1>
-    </header>
-
     <main>
         <div class="projection-layout">
-            <!-- Left Half - Current Item -->
-            <div class="projection-section">
+            <!-- Current Event - Full Screen -->
+            <div class="projection-section current-event-section">
                 <h2>✨ Now on Stage ✨</h2>
                 <div id="projectionCurrentEvent" class="projection-event-card">
                     <div class="projection-no-event">
@@ -647,8 +608,8 @@
                 </div>
             </div>
 
-            <!-- Right Half - Upcoming Items -->
-            <div class="projection-section">
+            <!-- Compact Upcoming Section -->
+            <div class="projection-section upcoming-section">
                 <h2>🎪 Coming Up Next 🎪</h2>
                 <div id="projectionUpcomingEvents" class="upcoming-events-projection">
                     <div class="projection-no-event">
@@ -754,35 +715,31 @@
                     upcomingEvents = events.filter(event => event.id !== currentEvent.id);
                 }
                 
-                // Render upcoming events
+                // Render upcoming events - show only the first one with just the name
                 if (upcomingEvents.length === 0) {
                     upcomingContainer.innerHTML = `
                         <div class="projection-no-event fade-in">
                             <p>🎉 What a show! 🎉</p>
-                            <p>Stay tuned for more incredible performances!</p>
                         </div>
                     `;
                 } else {
-                    const upcomingHtml = upcomingEvents.map((item, index) => {
-                        if (item.type === 'announcement') {
-                            return `
-                                <div class="projection-upcoming-announcement fade-in">
-                                    <span class="announcement-icon">📢</span>
-                                    <div class="announcement-text">${escapeHtml(item.description)}</div>
-                                </div>
-                            `;
-                        } else {
-                            const participants = item.participants || [];
-                            const participantsText = participants.length > 0 ? participants.join(', ') : 'Amazing Performer';
-                            return `
-                                <div class="projection-upcoming-item fade-in">
-                                    <h4>🎭 ${escapeHtml(item.name || 'Spectacular Act')}</h4>
-                                    <div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(participantsText)}</div>
-                                    <div class="description">🌟 ${escapeHtml(item.description || 'An incredible performance awaits!')}</div>
-                                </div>
-                            `;
-                        }
-                    }).join('');
+                    // Show only the first upcoming event with just the name
+                    const nextEvent = upcomingEvents[0];
+                    let upcomingHtml = '';
+                    
+                    if (nextEvent.type === 'announcement') {
+                        upcomingHtml = `
+                            <div class="projection-upcoming-item fade-in">
+                                <h4>📢 ${escapeHtml(nextEvent.description)}</h4>
+                            </div>
+                        `;
+                    } else {
+                        upcomingHtml = `
+                            <div class="projection-upcoming-item fade-in">
+                                <h4>🎭 ${escapeHtml(nextEvent.name || 'Spectacular Act')}</h4>
+                            </div>
+                        `;
+                    }
 
                     upcomingContainer.innerHTML = upcomingHtml;
                 }
