@@ -192,7 +192,15 @@ export default async function handler(req, res) {
 
     if (path.startsWith('/api/events/')) {
       const pathParts = path.split('/');
-      const eventId = pathParts[pathParts.length - 1]; // Get the last part as event ID
+      let eventId = pathParts[pathParts.length - 1]; // Get the last part as event ID
+      
+      // Decode the URL-encoded event ID
+      try {
+        eventId = decodeURIComponent(eventId);
+      } catch (e) {
+        console.error('Failed to decode event ID:', eventId, e);
+      }
+      
       console.log('Event ID extracted:', eventId, 'from path:', path, 'pathParts:', pathParts);
       
       if (!eventId || eventId === 'events') {
@@ -319,7 +327,15 @@ export default async function handler(req, res) {
 
     if (path.startsWith('/api/finished/')) {
       const pathParts = path.split('/');
-      const eventId = pathParts[pathParts.length - 1]; // Get the last part as event ID
+      let eventId = pathParts[pathParts.length - 1]; // Get the last part as event ID
+      
+      // Decode the URL-encoded event ID
+      try {
+        eventId = decodeURIComponent(eventId);
+      } catch (e) {
+        console.error('Failed to decode finished event ID:', eventId, e);
+      }
+      
       console.log('Finished Event ID extracted:', eventId, 'from path:', path, 'pathParts:', pathParts);
       
       if (!eventId || eventId === 'finished') {

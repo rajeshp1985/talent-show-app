@@ -188,6 +188,7 @@ class TalentShowManager {
 
     async updateItem(id, itemData) {
         const updatedItem = {
+            id: id, // Ensure the ID is included in the update
             type: itemData.type,
             description: itemData.description
         };
@@ -205,9 +206,11 @@ class TalentShowManager {
         }
 
         try {
+            console.log('Updating item with ID:', id, 'data:', updatedItem);
             await this.dataService.updateEvent(id, updatedItem);
             await this.loadEvents(); // Refresh local data
         } catch (error) {
+            console.error('Update failed:', error);
             throw error;
         }
     }
