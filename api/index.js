@@ -123,8 +123,11 @@ export default async function handler(req, res) {
     res.setHeader(key, value);
   });
 
-  const { method, url } = req;
+  const { method, url, query } = req;
   const path = url.split('?')[0];
+  
+  // Log the request for debugging
+  console.log(`${method} ${path}`, { query, body: req.body });
 
   try {
     // Route handling
@@ -188,13 +191,27 @@ export default async function handler(req, res) {
     }
 
     if (path.startsWith('/api/events/')) {
-      const eventId = path.split('/')[3];
+      const pathParts = path.split('/');
+      const eventId = pathParts[pathParts.length - 1]; // Get the last part as event ID
+      console.log('Event ID extracted:', eventId, 'from path:', path, 'pathParts:', pathParts);
+      
+      if (!eventId || eventId === 'events') {
+        return res.status(400).json({ error: 'Event ID is required' });
+      }
+      
       const data = await readData();
 
       if (method === 'PUT') {
-        const eventIndex = data.events.findIndex(e => e.id === eventId);
+        console.log('Looking for event with ID:', eventId, 'in events:', data.events.map(e => ({ id: e.id, type: typeof e.id })));
+        
+        // Convert eventId to match the type of IDs in the data
+        const eventIndex = data.events.findIndex(e => String(e.id) === String(eventId));
         if (eventIndex === -1) {
-          return res.status(404).json({ error: 'Event not found' });
+          return res.status(404).json({ 
+            error: 'Event not found', 
+            eventId: eventId,
+            availableIds: data.events.map(e => e.id)
+          });
         }
 
         data.events[eventIndex] = { ...data.events[eventIndex], ...req.body };
@@ -203,9 +220,16 @@ export default async function handler(req, res) {
       }
 
       if (method === 'DELETE') {
-        const eventIndex = data.events.findIndex(e => e.id === eventId);
+        console.log('Looking for event to delete with ID:', eventId, 'in events:', data.events.map(e => ({ id: e.id, type: typeof e.id })));
+        
+        // Convert eventId to match the type of IDs in the data
+        const eventIndex = data.events.findIndex(e => String(e.id) === String(eventId));
         if (eventIndex === -1) {
-          return res.status(404).json({ error: 'Event not found' });
+          return res.status(404).json({ 
+            error: 'Event not found', 
+            eventId: eventId,
+            availableIds: data.events.map(e => e.id)
+          });
         }
 
         data.events.splice(eventIndex, 1);
@@ -294,13 +318,27 @@ export default async function handler(req, res) {
     }
 
     if (path.startsWith('/api/finished/')) {
-      const eventId = path.split('/')[3];
+      const pathParts = path.split('/');
+      const eventId = pathParts[pathParts.length - 1]; // Get the last part as event ID
+      console.log('Finished Event ID extracted:', eventId, 'from path:', path, 'pathParts:', pathParts);
+      
+      if (!eventId || eventId === 'finished') {
+        return res.status(400).json({ error: 'Finished event ID is required' });
+      }
+      
       const data = await readData();
 
       if (method === 'DELETE') {
-        const eventIndex = data.finishedEvents.findIndex(e => e.id === eventId);
+        console.log('Looking for finished event to delete with ID:', eventId, 'in finished events:', data.finishedEvents.map(e => ({ id: e.id, type: typeof e.id })));
+        
+        // Convert eventId to match the type of IDs in the data
+        const eventIndex = data.finishedEvents.findIndex(e => String(e.id) === String(eventId));
         if (eventIndex === -1) {
-          return res.status(404).json({ error: 'Finished event not found' });
+          return res.status(404).json({ 
+            error: 'Finished event not found', 
+            eventId: eventId,
+            availableIds: data.finishedEvents.map(e => e.id)
+          });
         }
 
         data.finishedEvents.splice(eventIndex, 1);
@@ -312,11 +350,19 @@ export default async function handler(req, res) {
     if (path === '/api/restore') {
       if (method === 'POST') {
         const { id } = req.body;
+        console.log('Restore request for ID:', id, 'type:', typeof id);
+        
         const data = await readData();
+        console.log('Looking for finished event to restore with ID:', id, 'in finished events:', data.finishedEvents.map(e => ({ id: e.id, type: typeof e.id })));
 
-        const eventIndex = data.finishedEvents.findIndex(e => e.id === id);
+        // Convert id to match the type of IDs in the data
+        const eventIndex = data.finishedEvents.findIndex(e => String(e.id) === String(id));
         if (eventIndex === -1) {
-          return res.status(404).json({ error: 'Finished event not found' });
+          return res.status(404).json({ 
+            error: 'Finished event not found', 
+            requestedId: id,
+            availableIds: data.finishedEvents.map(e => e.id)
+          });
         }
 
         const eventToRestore = data.finishedEvents.splice(eventIndex, 1)[0];

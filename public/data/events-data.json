@@ -1,30 +1,24 @@
 {
-  "events": [],
-  "currentEvent": null,
-  "finishedEvents": [
+  "events": [
     {
       "id": "Presentation of Onam Music Competition Awards",
       "type": "announcement",
-      "description": "Presentation of Onam Music Competition Awards",
-      "finishedAt": "2025-10-03T13:51:09.891Z"
+      "description": "Presentation of Onam Music Competition Awards"
     },
     {
       "id": "Vote of Thanks",
       "type": "announcement",
-      "description": "Vote of Thanks",
-      "finishedAt": "2025-10-03T21:09:12.005Z"
+      "description": "Vote of Thanks"
     },
     {
       "id": "ITEM 7",
       "type": "announcement",
-      "description": "Thalapoli",
-      "finishedAt": "2025-10-03T21:09:21.920Z"
+      "description": "Thalapoli"
     },
     {
       "id": "ITEM 8",
       "type": "announcement",
-      "description": "Welcome Address",
-      "finishedAt": "2025-10-03T21:09:22.663Z"
+      "description": "Welcome Address"
     },
     {
       "id": "ITEM1",
@@ -41,8 +35,7 @@
         "Divya Sivaraman",
         "Ambili Sreejith"
       ],
-      "photo": "https://talent-show-app.vercel.app/images/Thiruvathira.jpg",
-      "finishedAt": "2025-10-03T21:10:01.625Z"
+      "photo": "https://talent-show-app.vercel.app/images/Thiruvathira.jpg"
     },
     {
       "id": "ITEM 21",
@@ -52,8 +45,7 @@
       "participants": [
         "Shania Vijay"
       ],
-      "photo": "images/default.jpg",
-      "finishedAt": "2025-10-03T21:11:45.687Z"
+      "photo": "images/default.jpg"
     },
     {
       "id": "ITEM 4",
@@ -71,8 +63,7 @@
         "Evlyn Binesh",
         "Ivaan Nair"
       ],
-      "photo": "images/little-stars.jpg",
-      "finishedAt": "2025-10-03T21:11:57.213Z"
+      "photo": "images/little-stars.jpg"
     },
     {
       "id": "ITEM7",
@@ -82,8 +73,7 @@
       "participants": [
         "Punnya Madhavan"
       ],
-      "photo": "punya.jpg",
-      "finishedAt": "2025-10-03T21:13:16.350Z"
+      "photo": "punya.jpg"
     },
     {
       "id": "ITEM 5",
@@ -97,8 +87,7 @@
         "Evelyn Jibins",
         "Serah Mercy Shiju"
       ],
-      "photo": "images/attitude-girls.jpg",
-      "finishedAt": "2025-10-03T21:13:21.946Z"
+      "photo": "images/attitude-girls.jpg"
     },
     {
       "id": "ITEM9",
@@ -109,8 +98,7 @@
         "Lee Varughese",
         "Dity Varughese"
       ],
-      "photo": "images/lee-dity.jpg",
-      "finishedAt": "2025-10-03T21:13:27.015Z"
+      "photo": "images/lee-dity.jpg"
     },
     {
       "id": "ITEM10",
@@ -121,8 +109,7 @@
         "Amy Kalathil",
         "Lee Varughese"
       ],
-      "photo": "images/amy-lee.jpg",
-      "finishedAt": "2025-10-03T21:13:30.280Z"
+      "photo": "images/amy-lee.jpg"
     },
     {
       "id": "ITEM11",
@@ -133,8 +120,7 @@
         "Dinesh Parapperi",
         "Amy Kalathil"
       ],
-      "photo": "https://talent-show-app.vercel.app/images/song-dinesh-amy.jpg",
-      "finishedAt": "2025-10-03T21:13:46.695Z"
+      "photo": "https://talent-show-app.vercel.app/images/song-dinesh-amy.jpg"
     },
     {
       "id": "ITEM 3",
@@ -145,8 +131,7 @@
         "Nikitha Ramesh",
         "Advik Ramesh"
       ],
-      "photo": "images/sibling-stars.jpg",
-      "finishedAt": "2025-10-03T21:13:53.839Z"
+      "photo": "images/sibling-stars.jpg"
     },
     {
       "id": "ITEM 31",
@@ -156,8 +141,7 @@
       "participants": [
         "Anoop Chandra Mohanan"
       ],
-      "photo": "images/anoop.png",
-      "finishedAt": "2025-10-03T21:13:59.442Z"
+      "photo": "images/anoop.png"
     },
     {
       "id": "ITEM14",
@@ -167,8 +151,7 @@
       "participants": [
         "Seema Mujib"
       ],
-      "photo": "images/seema.jpg",
-      "finishedAt": "2025-10-03T21:14:02.848Z"
+      "photo": "images/seema.jpg"
     },
     {
       "id": "ITEM 6",
@@ -179,8 +162,7 @@
         "Sanaa Dattan",
         "⁠Avanitha Anand Kalaivani"
       ],
-      "photo": "images/kaanthari.jpg",
-      "finishedAt": "2025-10-03T21:14:41.982Z"
+      "photo": "images/kaanthari.jpg"
     },
     {
       "id": "ITEM16",
@@ -190,8 +172,7 @@
       "participants": [
         "Dinesh Parapperi"
       ],
-      "photo": "https://talent-show-app.vercel.app/images/song-dinesh.jpg",
-      "finishedAt": "2025-10-03T21:14:45.115Z"
+      "photo": "https://talent-show-app.vercel.app/images/song-dinesh.jpg"
     },
     {
       "id": "ITEM 2",
@@ -208,8 +189,7 @@
         "Divya",
         "Sherin"
       ],
-      "photo": "images/ladies-dance.jpg",
-      "finishedAt": "2025-10-03T21:14:48.711Z"
+      "photo": "images/ladies-dance.jpg"
     },
     {
       "id": "ITEM 35",
@@ -226,9 +206,10 @@
         "Dinesh",
         "Anoop"
       ],
-      "photo": "images/group-song.jpg",
-      "finishedAt": "2025-10-03T21:14:51.878Z"
+      "photo": "images/group-song.jpg"
     }
   ],
-  "lastUpdated": "2025-10-03T21:14:51.878Z"
+  "currentEvent": null,
+  "finishedEvents": [],
+  "lastUpdated": "2025-10-03T21:26:01.317Z"
 }
