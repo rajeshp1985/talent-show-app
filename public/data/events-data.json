@@ -1,5 +1,60 @@
 {
-  "events": [
+  "events": [],
+  "currentEvent": null,
+  "finishedEvents": [
+    {
+      "id": "Presentation of Onam Music Competition Awards",
+      "type": "announcement",
+      "description": "Presentation of Onam Music Competition Awards",
+      "finishedAt": "2025-10-03T13:51:09.891Z"
+    },
+    {
+      "id": "Vote of Thanks",
+      "type": "announcement",
+      "description": "Vote of Thanks",
+      "finishedAt": "2025-10-03T21:09:12.005Z"
+    },
+    {
+      "id": "ITEM 7",
+      "type": "announcement",
+      "description": "Thalapoli",
+      "finishedAt": "2025-10-03T21:09:21.920Z"
+    },
+    {
+      "id": "ITEM 8",
+      "type": "announcement",
+      "description": "Welcome Address",
+      "finishedAt": "2025-10-03T21:09:22.663Z"
+    },
+    {
+      "id": "ITEM1",
+      "type": "event",
+      "description": "Thiruvathira",
+      "name": "Thiruvathira",
+      "participants": [
+        "Punnya Madhavan",
+        "Angelmary Koola",
+        "Mithula Rajeev",
+        "Manjusha Raveendran",
+        "Rajitha Nair",
+        "Kalavani Pillai",
+        "Divya Sivaraman",
+        "Ambili Sreejith"
+      ],
+      "photo": "https://talent-show-app.vercel.app/images/Thiruvathira.jpg",
+      "finishedAt": "2025-10-03T21:10:01.625Z"
+    },
+    {
+      "id": "ITEM 21",
+      "type": "event",
+      "description": "Song by Shania",
+      "name": "Song by Shania",
+      "participants": [
+        "Shania Vijay"
+      ],
+      "photo": "images/default.jpg",
+      "finishedAt": "2025-10-03T21:11:45.687Z"
+    },
     {
       "id": "ITEM 4",
       "type": "event",
@@ -16,18 +71,19 @@
         "Evlyn Binesh",
         "Ivaan Nair"
       ],
-      "photo": "images/our-little-stars.jpg"
+      "photo": "images/little-stars.jpg",
+      "finishedAt": "2025-10-03T21:11:57.213Z"
     },
     {
-      "id": "ITEM 3",
+      "id": "ITEM7",
       "type": "event",
-      "description": "Siblings in action",
-      "name": "Sibiling stars",
+      "description": "Song by Punnya",
+      "name": "Song by Punnya",
       "participants": [
-        "Nikitha Ramesh",
-        "Advik Ramesh"
+        "Punnya Madhavan"
       ],
-      "photo": "images/siblings-action.jpg"
+      "photo": "punya.jpg",
+      "finishedAt": "2025-10-03T21:13:16.350Z"
     },
     {
       "id": "ITEM 5",
@@ -41,27 +97,79 @@
         "Evelyn Jibins",
         "Serah Mercy Shiju"
       ],
-      "photo": "images/girl-attitude.jpg"
-    }
-  ],
-  "currentEvent": {
-    "id": "ITEM 2",
-    "type": "event",
-    "description": "A spectacular dance from the ladies",
-    "name": "Ladies Dance",
-    "participants": [
-      "Punnya Madhavan",
-      "Jeny",
-      "Angel",
-      "Priya",
-      "Tanu",
-      "Manju",
-      "Divya",
-      "Sherin"
-    ],
-    "photo": "images/ladies-dance.jpg"
-  },
-  "finishedEvents": [
+      "photo": "images/attitude-girls.jpg",
+      "finishedAt": "2025-10-03T21:13:21.946Z"
+    },
+    {
+      "id": "ITEM9",
+      "type": "event",
+      "description": "Song By Lee and Dity",
+      "name": "Song By Lee and Dity",
+      "participants": [
+        "Lee Varughese",
+        "Dity Varughese"
+      ],
+      "photo": "images/lee-dity.jpg",
+      "finishedAt": "2025-10-03T21:13:27.015Z"
+    },
+    {
+      "id": "ITEM10",
+      "type": "event",
+      "description": "Song by Amy and Lee",
+      "name": "Song by Amy and Lee",
+      "participants": [
+        "Amy Kalathil",
+        "Lee Varughese"
+      ],
+      "photo": "images/amy-lee.jpg",
+      "finishedAt": "2025-10-03T21:13:30.280Z"
+    },
+    {
+      "id": "ITEM11",
+      "type": "event",
+      "description": "Song by Dinesh & Amy",
+      "name": "Song by Dinesh & Amy",
+      "participants": [
+        "Dinesh Parapperi",
+        "Amy Kalathil"
+      ],
+      "photo": "https://talent-show-app.vercel.app/images/song-dinesh-amy.jpg",
+      "finishedAt": "2025-10-03T21:13:46.695Z"
+    },
+    {
+      "id": "ITEM 3",
+      "type": "event",
+      "description": "Siblings in action",
+      "name": "Sibiling stars",
+      "participants": [
+        "Nikitha Ramesh",
+        "Advik Ramesh"
+      ],
+      "photo": "images/sibling-stars.jpg",
+      "finishedAt": "2025-10-03T21:13:53.839Z"
+    },
+    {
+      "id": "ITEM 31",
+      "type": "event",
+      "description": "Song by Anoop",
+      "name": "Song by Anoop",
+      "participants": [
+        "Anoop Chandra Mohanan"
+      ],
+      "photo": "images/anoop.png",
+      "finishedAt": "2025-10-03T21:13:59.442Z"
+    },
+    {
+      "id": "ITEM14",
+      "type": "event",
+      "description": "Song by Seema",
+      "name": "Song by Seema",
+      "participants": [
+        "Seema Mujib"
+      ],
+      "photo": "images/seema.jpg",
+      "finishedAt": "2025-10-03T21:14:02.848Z"
+    },
     {
       "id": "ITEM 6",
       "type": "event",
@@ -71,27 +179,56 @@
         "Sanaa Dattan",
         "⁠Avanitha Anand Kalaivani"
       ],
-      "photo": "images/Kantharis.jpg",
-      "finishedAt": "2025-10-01T03:54:56.762Z"
+      "photo": "images/kaanthari.jpg",
+      "finishedAt": "2025-10-03T21:14:41.982Z"
     },
     {
-      "id": "ITEM1",
+      "id": "ITEM16",
       "type": "event",
-      "description": "Thiruvathira",
-      "name": "Thiruvathira",
+      "description": "Song By Dinesh Parapperi",
+      "name": "Song By Dinesh Parapperi",
+      "participants": [
+        "Dinesh Parapperi"
+      ],
+      "photo": "https://talent-show-app.vercel.app/images/song-dinesh.jpg",
+      "finishedAt": "2025-10-03T21:14:45.115Z"
+    },
+    {
+      "id": "ITEM 2",
+      "type": "event",
+      "description": "A spectacular dance from the ladies",
+      "name": "Ladies Dance",
       "participants": [
         "Punnya Madhavan",
+        "Jeny",
         "Angel",
-        "Mithula",
+        "Priya",
+        "Tanu",
         "Manju",
-        "Rajitha",
-        "Vani",
         "Divya",
-        "Ambili"
+        "Sherin"
       ],
-      "photo": "images/Thiruvathira.jpg",
-      "finishedAt": "2025-10-01T05:16:58.846Z"
+      "photo": "images/ladies-dance.jpg",
+      "finishedAt": "2025-10-03T21:14:48.711Z"
+    },
+    {
+      "id": "ITEM 35",
+      "type": "event",
+      "description": "Group Song",
+      "name": "Group Song",
+      "participants": [
+        "Punnya Madhavan",
+        "Lee Varughese",
+        "Dity Varughese",
+        "Amy",
+        "Seema Mujib",
+        "Pallavi",
+        "Dinesh",
+        "Anoop"
+      ],
+      "photo": "images/group-song.jpg",
+      "finishedAt": "2025-10-03T21:14:51.878Z"
     }
   ],
-  "lastUpdated": "2025-10-01T05:16:58.846Z"
+  "lastUpdated": "2025-10-03T21:14:51.878Z"
 }
