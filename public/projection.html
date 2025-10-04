@@ -772,10 +772,13 @@
                     `;
 
                     // Display details in right section
+                    const showFeaturing = participantsText !== '+';
+                    const featuringHtml = showFeaturing ? `<div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(participantsText)}</div>` : '';
+                    
                     currentDetailsContainer.innerHTML = `
                         <div class="fade-in">
                             <h3>🎪 ${escapeHtml(currentEvent.name || 'Spectacular Performance')}</h3>
-                            <div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(participantsText)}</div>
+                            ${featuringHtml}
                         </div>
                     `;
                 }
@@ -806,10 +809,13 @@
                             </div>
                         `;
                     } else {
+                        const showNextFeaturing = nextParticipantsText !== '+';
+                        const nextFeaturingHtml = showNextFeaturing ? `<div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(nextParticipantsText)}</div>` : '';
+                        
                         upcomingDetailsContainer.innerHTML = `
                             <div class="fade-in">
                                 <h3>🎭 ${escapeHtml(nextEvent.name || 'Spectacular Act')}</h3>
-                                <div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(nextParticipantsText)}</div>
+                                ${nextFeaturingHtml}
                             </div>
                         `;
                     }
