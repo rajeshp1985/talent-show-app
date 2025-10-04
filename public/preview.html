@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Show - Preview Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Poppins:wght@300;400;500;600;700;800&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Bright & Vibrant Event Theme */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: 
+                linear-gradient(135deg, #d63031 0%, #e17055 25%, #0984e3 50%, #a29bfe 75%, #6c5ce7 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            color: #2d3436;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Festive animated background elements */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.3) 2px, transparent 2px),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.2) 3px, transparent 3px),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+                radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.15) 2px, transparent 2px),
+                radial-gradient(circle at 20% 90%, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+            background-size: 100px 100px, 150px 150px, 80px 80px, 120px 120px, 90px 90px;
+            animation: sparkleFloat 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes sparkleFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(360deg); }
+        }
+
+        /* Confetti animation */
+        body::after {
+            content: '🎉 ✨ 🎊 🌟 🎭 🎪 🎨 🎵 🎤 🎸 🥳 🎺 🎷 🎻';
+            position: fixed;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: confettiFall 25s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-100px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        /* Vibrant header */
+        header {
+            text-align: center;
+            padding: 1rem 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 4px solid #ff6b6b;
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        header h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            font-weight: 400;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGradient 4s ease infinite;
+            margin: 0;
+            text-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+            position: relative;
+        }
+
+        @keyframes textGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        header h1::before {
+            content: '🎪';
+            position: absolute;
+            left: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        header h1::after {
+            content: '🎭';
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            animation: bounce 2s ease-in-out infinite 1s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-60%) scale(1.1); }
+        }
+        
+        .projection-layout {
+            display: flex;
+            flex-direction: row;
+            padding: 1rem;
+            height: calc(100vh - 8rem);
+            max-width: 100%;
+            margin: 0;
+            gap: 1rem;
+        }
+
+        .photo-section {
+            flex: 0 0 62.5%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .details-section {
+            flex: 0 0 37.5%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .current-event-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .upcoming-event-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .projection-section h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #2c2c54, #40407a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            text-shadow: 0 2px 10px rgba(44, 44, 84, 0.2);
+        }
+
+        .upcoming-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .projection-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
+            border-radius: 2px;
+            animation: underlineGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes underlineGlow {
+            0% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.8); }
+        }
+        
+        /* Bright and festive event cards */
+        .projection-event-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 249, 250, 0.95) 100%);
+            border: 4px solid transparent;
+            background-clip: padding-box;
+            border-radius: 30px;
+            padding: 2rem;
+            box-shadow: 
+                0 25px 70px rgba(0, 0, 0, 0.15),
+                0 0 0 4px rgba(214, 48, 49, 0.6);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .projection-event-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 300% 100%;
+            animation: borderFlow 3s linear infinite;
+        }
+
+        @keyframes borderFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .projection-event-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 
+                0 30px 80px rgba(255, 107, 107, 0.3),
+                0 0 0 3px rgba(255, 107, 107, 0.5);
+        }
+        
+        .projection-event-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #2c2c54, #40407a, #706fd3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(44, 44, 84, 0.1);
+        }
+        
+        .projection-event-card .participants {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #ff6b6b;
+            text-align: center;
+            background: linear-gradient(45deg, #ff6b6b, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .projection-event-card .description {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #2c2c54;
+            text-align: center;
+            font-weight: 400;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 0.75rem;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 107, 0.2);
+            margin-top: 0.5rem;
+        }
+        
+        .projection-no-event {
+            text-align: center;
+            color: #2c2c54;
+            font-size: 1.4rem;
+            padding: 4rem 2rem;
+            font-weight: 600;
+        }
+
+        .projection-no-event p:first-child {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        
+        /* Bright announcement styles */
+        .projection-announcement-banner {
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-radius: 30px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 
+                0 25px 60px rgba(254, 202, 87, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .projection-announcement-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: announcementShimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes announcementShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .projection-announcement-banner .announcement-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            line-height: 1.4;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+        }
+        
+        .projection-announcement-banner .announcement-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: iconBounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Photo section styling */
+        .photo-section img {
+            max-width: 98%;
+            max-height: 95vh;
+            width: auto;
+            height: auto;
+            border-radius: 20px;
+            object-fit: contain;
+            border: 6px solid #ff6b6b;
+            box-shadow: 
+                0 25px 50px rgba(255, 107, 107, 0.4),
+                0 0 0 6px rgba(255, 255, 255, 0.9),
+                0 0 40px rgba(255, 107, 107, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .photo-section img:hover {
+            transform: scale(1.02) rotate(0.5deg);
+            border-color: #feca57;
+            box-shadow: 
+                0 30px 60px rgba(254, 202, 87, 0.5),
+                0 0 0 6px rgba(255, 255, 255, 1),
+                0 0 50px rgba(254, 202, 87, 0.4);
+        }
+
+        /* Details section styling */
+        .details-section h2 {
+            font-family: 'Dancing Script', cursive;
+            font-weight: 700;
+            background: linear-gradient(45deg, #2c2c54, #40407a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            position: relative;
+            text-shadow: 0 2px 10px rgba(44, 44, 84, 0.2);
+        }
+
+        .details-section .projection-event-card {
+            padding: 2rem;
+            font-size: 1.1rem;
+            justify-content: flex-start;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .details-section .projection-event-card h3 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.2rem;
+            color: #2c2c54;
+            background: none;
+            -webkit-text-fill-color: #2c2c54;
+            text-shadow: none;
+            text-align: left;
+            line-height: 1.1;
+        }
+
+        .details-section .projection-event-card .participants {
+            font-size: 2.45rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2c5aa0;
+            background: none;
+            -webkit-text-fill-color: #2c5aa0;
+            text-align: left;
+        }
+
+        .details-section .projection-event-card .description {
+            font-size: 1.1rem;
+            padding: 1rem;
+            color: #2c2c54;
+            background: rgba(255, 255, 255, 0.9);
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        /* Fun loading animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 107, 107, 0.3);
+            border-radius: 50%;
+            border-top-color: #ff6b6b;
+            animation: colorfulSpin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes colorfulSpin {
+            0% { transform: rotate(0deg); border-top-color: #ff6b6b; }
+            25% { border-top-color: #feca57; }
+            50% { transform: rotate(180deg); border-top-color: #48dbfb; }
+            75% { border-top-color: #ff9ff3; }
+            100% { transform: rotate(360deg); border-top-color: #ff6b6b; }
+        }
+
+        /* Preview status indicator */
+        .status-indicator {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+            box-shadow: 0 0 20px rgba(254, 202, 87, 0.6);
+            animation: previewStatusPulse 1.5s ease-in-out infinite;
+            z-index: 1000;
+        }
+
+        @keyframes previewStatusPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        /* Navigation Controls */
+        .preview-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 15px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            border: 3px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .preview-controls button {
+            background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .preview-controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .preview-controls button:disabled {
+            background: linear-gradient(135deg, #ccc, #ddd);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .preview-controls .event-counter {
+            background: linear-gradient(135deg, #2c2c54, #40407a);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .preview-controls .back-btn {
+            background: linear-gradient(135deg, #48dbfb, #0984e3);
+            padding: 10px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .preview-controls .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 219, 251, 0.4);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .projection-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header h1::before,
+            header h1::after {
+                display: none;
+            }
+            
+            .projection-section h2 {
+                font-size: 2.5rem;
+            }
+
+            .projection-event-card {
+                padding: 2rem;
+            }
+
+            .projection-event-card h3 {
+                font-size: 2rem;
+            }
+
+            .preview-controls {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px 20px;
+            }
+
+            .preview-controls button {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+        }
+
+        /* Smooth transitions */
+        .fade-in {
+            animation: brightFadeIn 0.8s ease-out;
+        }
+
+        @keyframes brightFadeIn {
+            0% { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.9); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        /* Fun hover effects */
+        .projection-event-card:hover h3 {
+            animation: textBounce 0.6s ease-in-out;
+        }
+
+        @keyframes textBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-indicator" title="🔍 PREVIEW MODE - Navigate through events"></div>
+    
+    <header>
+        <h1>Preview Mode</h1>
+    </header>
+
+    <main>
+        <div class="projection-layout">
+            <!-- Left Section - Photo (70%) -->
+            <div class="photo-section">
+                <div id="projectionPhoto">
+                    <div class="projection-no-event">
+                        <div class="loading-spinner"></div>
+                        <p>🎭 Loading Preview! 🎭</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section - Details (30%) -->
+            <div class="details-section">
+                <!-- Current Event Details (Top Half) -->
+                <div class="current-event-details">
+                    <h2 style="font-size: 3.4rem; font-weight: bold; margin-bottom: 1rem;">✨ Previewing ✨</h2>
+                    <div id="projectionCurrentDetails" class="projection-event-card">
+                        <div class="projection-no-event">
+                            <p>Loading preview...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Event Details (Bottom Half) -->
+                <div class="upcoming-event-details">
+                    <h2 style="font-size: 3.4rem; font-weight: bold; margin-bottom: 1rem;">🎪 Next Up 🎪</h2>
+                    <div id="projectionUpcomingDetails" class="projection-event-card">
+                        <div class="projection-no-event">
+                            <p>Loading next event...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Navigation Controls -->
+    <div class="preview-controls">
+        <a href="index.html" class="back-btn">← Back to Main</a>
+        <button id="prevBtn">← Previous</button>
+        <div class="event-counter" id="eventCounter">Event 1 of 1</div>
+        <button id="nextBtn">Next →</button>
+    </div>
+
+    <script>
+        class PreviewManager {
+            constructor() {
+                this.events = [];
+                this.currentIndex = 0;
+                this.init();
+            }
+
+            async init() {
+                await this.loadEvents();
+                this.bindEvents();
+                this.displayCurrentEvent();
+            }
+
+            async loadEvents() {
+                try {
+                    console.log('Loading data from API...');
+                    
+                    const response = await fetch('/api/data');
+                    if (!response.ok) {
+                        throw new Error(`API responded with status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('Data loaded successfully:', data);
+                    
+                    // Get all events (including current event and upcoming events)
+                    this.events = [];
+                    
+                    // Add current event if it exists
+                    if (data.currentEvent) {
+                        this.events.push(data.currentEvent);
+                    }
+                    
+                    // Add upcoming events
+                    if (data.events && data.events.length > 0) {
+                        this.events.push(...data.events);
+                    }
+                    
+                    console.log('Total events for preview:', this.events.length);
+                    
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    this.events = [];
+                }
+            }
+
+            bindEvents() {
+                document.getElementById('prevBtn').addEventListener('click', () => this.previousEvent());
+                document.getElementById('nextBtn').addEventListener('click', () => this.nextEvent());
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') {
+                        this.previousEvent();
+                    } else if (e.key === 'ArrowRight') {
+                        this.nextEvent();
+                    }
+                });
+            }
+
+            previousEvent() {
+                if (this.events.length > 0) {
+                    this.currentIndex = (this.currentIndex - 1 + this.events.length) % this.events.length;
+                    this.displayCurrentEvent();
+                }
+            }
+
+            nextEvent() {
+                if (this.events.length > 0) {
+                    this.currentIndex = (this.currentIndex + 1) % this.events.length;
+                    this.displayCurrentEvent();
+                }
+            }
+
+            displayCurrentEvent() {
+                const photoContainer = document.getElementById('projectionPhoto');
+                const currentDetailsContainer = document.getElementById('projectionCurrentDetails');
+                const upcomingDetailsContainer = document.getElementById('projectionUpcomingDetails');
+                const eventCounter = document.getElementById('eventCounter');
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+
+                // Update counter and button states
+                if (this.events.length === 0) {
+                    eventCounter.textContent = 'No Events';
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                } else {
+                    eventCounter.textContent = `Event ${this.currentIndex + 1} of ${this.events.length}`;
+                    prevBtn.disabled = false;
+                    nextBtn.disabled = false;
+                }
+
+                // Display current event
+                if (this.events.length === 0) {
+                    photoContainer.innerHTML = `
+                        <div class="projection-no-event fade-in">
+                            <p>🎭 No events to preview 🎭</p>
+                        </div>
+                    `;
+                    currentDetailsContainer.innerHTML = `
+                        <div class="projection-no-event">
+                            <p>🎭 No events available 🎭</p>
+                        </div>
+                    `;
+                } else {
+                    const currentEvent = this.events[this.currentIndex];
+                    
+                    if (currentEvent.type === 'announcement') {
+                        photoContainer.innerHTML = `
+                            <div class="projection-announcement-banner fade-in">                            
+                                <div class="announcement-text">${this.escapeHtml(currentEvent.description)}</div>
+                            </div>
+                        `;
+                        currentDetailsContainer.innerHTML = `
+                            <div class="fade-in">
+                                <h3>📢 Announcement</h3>
+                            </div>
+                        `;
+                    } else {
+                        const participants = currentEvent.participants || [];
+                        const participantsText = participants.length > 0 ? participants.join(', ') : 'Amazing Performer';
+                        
+                        // Enhanced image path handling
+                        let imageSrc = this.getDefaultAvatar();
+                        
+                        if (currentEvent.photo) {
+                            let photoPath = currentEvent.photo.trim();
+                            
+                            if (photoPath) {
+                                // Handle different image path formats
+                                if (photoPath.startsWith('http') || photoPath.startsWith('https')) {
+                                    // Absolute URL - use as is
+                                    imageSrc = photoPath;
+                                } else if (photoPath.startsWith('data:')) {
+                                    // Data URL - use as is
+                                    imageSrc = photoPath;
+                                } else if (photoPath.startsWith('/')) {
+                                    // Already has leading slash
+                                    imageSrc = photoPath;
+                                } else {
+                                    // Relative path - add leading slash
+                                    imageSrc = '/' + photoPath;
+                                }
+                            }
+                        }
+                        
+                        // Display photo in left section
+                        photoContainer.innerHTML = `
+                            <img src="${imageSrc}" alt="${this.escapeHtml(participantsText)}" class="fade-in"
+                                onload="console.log('✅ Image loaded successfully:', '${imageSrc}')" 
+                                onerror="console.log('❌ Image failed to load:', '${imageSrc}'); this.src='${this.getDefaultAvatar()}';">
+                        `;
+
+                        // Display details in right section
+                        const showFeaturing = participantsText !== '+';
+                        const featuringHtml = showFeaturing ? `<div class="participants"><strong>⭐ Featuring:</strong> ${this.escapeHtml(participantsText)}</div>` : '';
+                        
+                        currentDetailsContainer.innerHTML = `
+                            <div class="fade-in">
+                                <h3>🎪 ${this.escapeHtml(currentEvent.name || 'Spectacular Performance')}</h3>
+                                ${featuringHtml}
+                            </div>
+                        `;
+                    }
+                }
+
+                // Display next event
+                if (this.events.length <= 1) {
+                    upcomingDetailsContainer.innerHTML = `
+                        <div class="projection-no-event fade-in">
+                            <p>🎉 End of events! 🎉</p>
+                        </div>
+                    `;
+                } else {
+                    // Show the next event in the sequence
+                    const nextIndex = (this.currentIndex + 1) % this.events.length;
+                    const nextEvent = this.events[nextIndex];
+                    
+                    if (nextEvent.type === 'announcement') {
+                        upcomingDetailsContainer.innerHTML = `
+                            <div class="fade-in">
+                                <h3>📢 Next: Announcement</h3>
+                            </div>
+                        `;
+                    } else {
+                        const nextParticipants = nextEvent.participants || [];
+                        const nextParticipantsText = nextParticipants.length > 0 ? nextParticipants.join(', ') : 'Amazing Performer';
+                        const showNextFeaturing = nextParticipantsText !== '+';
+                        const nextFeaturingHtml = showNextFeaturing ? `<div class="participants"><strong>⭐ Featuring:</strong> ${this.escapeHtml(nextParticipantsText)}</div>` : '';
+                        
+                        upcomingDetailsContainer.innerHTML = `
+                            <div class="fade-in">
+                                <h3>🎭 ${this.escapeHtml(nextEvent.name || 'Spectacular Act')}</h3>
+                                ${nextFeaturingHtml}
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            getDefaultAvatar() {
+                return "data:image/svg+xml,%3Csvg width='160' height='160' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='brightDefaultBg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ff6b6b;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%23feca57;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2348dbfb;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='160' height='160' fill='url(%23brightDefaultBg)'/%3E%3Ccircle cx='80' cy='60' r='25' fill='white' opacity='0.9'/%3E%3Cellipse cx='80' cy='120' rx='35' ry='45' fill='white' opacity='0.9'/%3E%3Ctext x='80' y='140' font-family='Arial, sans-serif' font-size='20' fill='white' text-anchor='middle'%3E🎭%3C/text%3E%3C/svg%3E";
+            }
+        }
+
+        // Initialize the preview manager
+        document.addEventListener('DOMContentLoaded', () => {
+            new PreviewManager();
+        });
+    </script>
+</body>
+</html>

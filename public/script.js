@@ -26,6 +26,7 @@ class TalentShowManager {
         // Navigation
         document.getElementById('homeBtn').addEventListener('click', () => this.showPage('home'));
         document.getElementById('manageBtn').addEventListener('click', () => this.showPage('manage'));
+        document.getElementById('previewBtn').addEventListener('click', () => this.openPreview());
         document.getElementById('projectionBtn').addEventListener('click', () => this.openProjection());
 
         // Home page buttons
@@ -285,6 +286,11 @@ class TalentShowManager {
     // Projection functionality
     openProjection() {
         window.open('projection.html', '_blank', 'fullscreen=yes,scrollbars=no,menubar=no,toolbar=no,location=no,status=no');
+    }
+
+    // Preview functionality
+    openPreview() {
+        window.open('preview.html', '_blank', 'width=1200,height=800,scrollbars=no,menubar=no,toolbar=no,location=no,status=no');
     }
 
     // Finished items management
