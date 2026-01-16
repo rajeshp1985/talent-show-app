@@ -1,24 +1,80 @@
 {
   "events": [
     {
-      "id": "ITEM1",
+      "id": "ITEM10",
       "type": "event",
-      "description": "Thiruvathira",
-      "name": "Thiruvathira",
+      "description": "Song by Amy and Lee",
+      "name": "Song by Amy and Lee",
       "participants": [
-        "Punnya Madhavan",
-        "Angel",
-        "Mithula",
-        "Manju",
-        "Rajitha",
-        "Vani",
-        "Divya",
-        "Ambili"
+        "+"
       ],
-      "photo": "images/Thiruvathira.jpg"
+      "photo": "http://localhost:3000/images/default.jpg"
     },
     {
-      "id": "ITEM 2",
+      "id": "ITEM11",
+      "type": "event",
+      "description": "Song by Dinesh & Amy",
+      "name": "Song by Dinesh & Amy",
+      "participants": [
+        "Dinesh Parapperi",
+        "Amy Kalathil"
+      ],
+      "photo": "https://talent-show-app.vercel.app/images/song-dinesh-amy.jpg"
+    },
+    {
+      "id": "ITEM3",
+      "type": "event",
+      "description": "Siblings in action",
+      "name": "Sibiling stars",
+      "participants": [
+        "Nikitha Ramesh",
+        "Advik Ramesh"
+      ],
+      "photo": "images/sibling-stars.jpg"
+    },
+    {
+      "id": "ITEM31",
+      "type": "event",
+      "description": "Song by Anoop",
+      "name": "Song by Anoop",
+      "participants": [
+        "Anoop Chandra Mohanan"
+      ],
+      "photo": "images/anoop.png"
+    },
+    {
+      "id": "ITEM14",
+      "type": "event",
+      "description": "Song by Seema",
+      "name": "Song by Seema",
+      "participants": [
+        "Seema Mujib"
+      ],
+      "photo": "images/seema.jpg"
+    },
+    {
+      "id": "ITEM6",
+      "type": "event",
+      "description": "Kantharis",
+      "name": "Kantharis",
+      "participants": [
+        "Sanaa Dattan",
+        "⁠Avanitha Anand Kalaivani"
+      ],
+      "photo": "images/kaanthari.jpg"
+    },
+    {
+      "id": "ITEM16",
+      "type": "event",
+      "description": "Song By Dinesh Parapperi",
+      "name": "Song By Dinesh Parapperi",
+      "participants": [
+        "Dinesh Parapperi"
+      ],
+      "photo": "https://talent-show-app.vercel.app/images/song-dinesh.jpg"
+    },
+    {
+      "id": "ITEM2",
       "type": "event",
       "description": "A spectacular dance from the ladies",
       "name": "Ladies Dance",
@@ -35,7 +91,89 @@
       "photo": "images/ladies-dance.jpg"
     },
     {
-      "id": "ITEM 4",
+      "id": "ITEM35",
+      "type": "event",
+      "description": "Group Song",
+      "name": "Group Song",
+      "participants": [
+        "Punnya Madhavan",
+        "Lee Varughese",
+        "Dity Varughese",
+        "Amy",
+        "Seema Mujib",
+        "Pallavi",
+        "Dinesh",
+        "Anoop"
+      ],
+      "photo": "images/group-song.jpg"
+    }
+  ],
+  "currentEvent": {
+    "id": "ITEM9",
+    "type": "event",
+    "description": "Song By Lee and Dity",
+    "name": "Song By Lee and Dity",
+    "participants": [
+      "+"
+    ],
+    "photo": "http://localhost:3000/images/dinesh.jpg"
+  },
+  "finishedEvents": [
+    {
+      "id": "Presentation of Onam Music Competition Awards",
+      "type": "announcement",
+      "description": "Presentation of Onam Music Competition Awards",
+      "finishedAt": "2025-10-04T00:23:11.422Z"
+    },
+    {
+      "id": "Vote of Thanks",
+      "type": "announcement",
+      "description": "Vote of Thanks",
+      "finishedAt": "2025-10-04T00:23:11.976Z"
+    },
+    {
+      "id": "ITEM7",
+      "type": "announcement",
+      "description": "Thalapoli",
+      "finishedAt": "2025-10-04T00:23:12.518Z"
+    },
+    {
+      "id": "ITEM8",
+      "type": "announcement",
+      "description": "Welcome Address",
+      "finishedAt": "2025-10-04T00:23:13.202Z"
+    },
+    {
+      "id": "ITEM1",
+      "type": "event",
+      "description": "Thiruvathira",
+      "name": "Thiruvathira",
+      "participants": [
+        "Punnya Madhavan",
+        "Angelmary Koola",
+        "Mithula Rajeev",
+        "Manjusha Raveendran",
+        "Rajitha Nair",
+        "Kalavani Pillai",
+        "Divya Sivaraman",
+        "Ambili Sreejith"
+      ],
+      "photo": "https://talent-show-app.vercel.app/images/Thiruvathira.jpg",
+      "finishedAt": "2025-10-04T00:23:14.518Z"
+    },
+    {
+      "id": "ITEM21",
+      "type": "event",
+      "description": "Song by Shania",
+      "name": "Song by Shania",
+      "participants": [
+        "Shania Vijay"
+      ],
+      "photo": "images/default.jpg",
+      "finishedAt": "2025-10-04T00:23:15.975Z"
+    },
+    {
+      "id": "ITEM4",
       "type": "event",
       "description": "Our little stars",
       "name": "Little stars",
@@ -50,21 +188,22 @@
         "Evlyn Binesh",
         "Ivaan Nair"
       ],
-      "photo": "images/our-little-stars.jpg"
+      "photo": "images/little-stars.jpg",
+      "finishedAt": "2025-10-04T00:23:16.724Z"
     },
     {
-      "id": "ITEM 3",
+      "id": "ITEM7",
       "type": "event",
-      "description": "Siblings in action",
-      "name": "Sibiling stars",
+      "description": "Song by Punnya",
+      "name": "Song by Punnya",
       "participants": [
-        "Nikitha Ramesh",
-        "Advik Ramesh"
+        "Punnya Madhavan"
       ],
-      "photo": "images/siblings-action.jpg"
+      "photo": "punya.jpg",
+      "finishedAt": "2025-10-04T00:23:17.581Z"
     },
     {
-      "id": "ITEM 5",
+      "id": "ITEM5",
       "type": "event",
       "description": "Girls with an attitude",
       "name": "Attitude Girls",
@@ -75,23 +214,9 @@
         "Evelyn Jibins",
         "Serah Mercy Shiju"
       ],
-      "photo": "images/girl-attitude.jpg"
+      "photo": "images/attitude-girls.jpg",
+      "finishedAt": "2025-10-04T00:23:18.450Z"
     }
   ],
-  "currentEvent": null,
-  "finishedEvents": [
-    {
-      "id": "ITEM 6",
-      "type": "event",
-      "description": "Kantharis",
-      "name": "Kantharis",
-      "participants": [
-        "Sanaa Dattan",
-        "⁠Avanitha Anand Kalaivani"
-      ],
-      "photo": "images/Kantharis.jpg",
-      "finishedAt": "2025-10-01T03:54:56.762Z"
-    }
-  ],
-  "lastUpdated": "2025-10-01T04:11:38.206Z"
+  "lastUpdated": "2025-10-04T05:16:37.150Z"
 }

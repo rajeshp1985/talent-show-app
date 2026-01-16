@@ -1,39 +1,48 @@
-// Vercel Serverless Function with Redis Database Integration
-// This version uses Redis for persistent data storage
+// Vercel Serverless Function with Redis
+// Uses Redis for persistent data storage (supports REDIS_URL)
 
-import { createClient } from 'redis';
+import Redis from 'ioredis';
 
-// Data keys for Redis storage
-const DATA_KEYS = {
-  EVENTS: 'talent-show:events',
-  CURRENT_EVENT: 'talent-show:current-event',
-  FINISHED_EVENTS: 'talent-show:finished-events',
-  LAST_UPDATED: 'talent-show:last-updated'
-};
-
-// Redis client instance
 let redisClient = null;
 
 // Initialize Redis client
-const getRedisClient = async () => {
-  if (!redisClient && process.env.REDIS_URL) {
+const getRedisClient = () => {
+  if (!process.env.REDIS_URL) {
+    return null;
+  }
+  
+  if (!redisClient) {
     try {
-      redisClient = createClient({
-        url: process.env.REDIS_URL
+      redisClient = new Redis(process.env.REDIS_URL, {
+        maxRetriesPerRequest: 3,
+        enableReadyCheck: false,
+        lazyConnect: true,
       });
       
       redisClient.on('error', (err) => {
-        console.error('Redis Client Error:', err);
+        console.error('Redis Client Error:', err.message);
       });
       
-      await redisClient.connect();
-      console.log('Redis client connected successfully');
+      // Connect lazily
+      redisClient.connect().catch(err => {
+        console.error('Redis connection failed:', err.message);
+        redisClient = null;
+      });
     } catch (error) {
-      console.error('Failed to connect to Redis:', error);
-      redisClient = null;
+      console.error('Failed to create Redis client:', error.message);
+      return null;
     }
   }
+  
   return redisClient;
+};
+
+// Data keys
+const KEYS = {
+  EVENTS: 'talent-show:events',
+  CURRENT: 'talent-show:current',
+  FINISHED: 'talent-show:finished',
+  UPDATED: 'talent-show:updated'
 };
 
 // Initialize data structure
@@ -44,22 +53,21 @@ const initializeData = () => ({
   lastUpdated: new Date().toISOString()
 });
 
-// Read data from Redis store
+// Read data from Redis
 const readData = async () => {
   try {
-    const client = await getRedisClient();
+    const redis = getRedisClient();
     
-    // Check if Redis is available
-    if (!client) {
-      console.log('Redis not available, using fallback data');
+    if (!redis) {
+      console.log('Redis not configured, using fallback data');
       return initializeData();
     }
 
     const [events, currentEvent, finishedEvents, lastUpdated] = await Promise.all([
-      client.get(DATA_KEYS.EVENTS),
-      client.get(DATA_KEYS.CURRENT_EVENT),
-      client.get(DATA_KEYS.FINISHED_EVENTS),
-      client.get(DATA_KEYS.LAST_UPDATED)
+      redis.get(KEYS.EVENTS),
+      redis.get(KEYS.CURRENT),
+      redis.get(KEYS.FINISHED),
+      redis.get(KEYS.UPDATED)
     ]);
 
     return {
@@ -69,38 +77,33 @@ const readData = async () => {
       lastUpdated: lastUpdated || new Date().toISOString()
     };
   } catch (error) {
-    console.error('Error reading from Redis:', error);
+    console.error('Error reading from Redis:', error.message);
     return initializeData();
   }
 };
 
-// Write data to Redis store
+// Write data to Redis
 const writeData = async (data) => {
   try {
-    const client = await getRedisClient();
+    const redis = getRedisClient();
     
-    if (!client) {
-      console.log('Redis not available, skipping write');
+    if (!redis) {
+      console.log('Redis not configured, skipping write');
       return;
     }
 
     data.lastUpdated = new Date().toISOString();
 
-    // Write all data to Redis store
     await Promise.all([
-      client.set(DATA_KEYS.EVENTS, JSON.stringify(data.events)),
-      client.set(DATA_KEYS.CURRENT_EVENT, JSON.stringify(data.currentEvent)),
-      client.set(DATA_KEYS.FINISHED_EVENTS, JSON.stringify(data.finishedEvents)),
-      client.set(DATA_KEYS.LAST_UPDATED, data.lastUpdated)
+      redis.set(KEYS.EVENTS, JSON.stringify(data.events)),
+      redis.set(KEYS.CURRENT, JSON.stringify(data.currentEvent)),
+      redis.set(KEYS.FINISHED, JSON.stringify(data.finishedEvents)),
+      redis.set(KEYS.UPDATED, data.lastUpdated)
     ]);
 
-    console.log('Data written to Redis successfully:', {
-      events: data.events.length,
-      currentEvent: !!data.currentEvent,
-      finishedEvents: data.finishedEvents.length
-    });
+    console.log('Data written to Redis successfully');
   } catch (error) {
-    console.error('Error writing to Redis:', error);
+    console.error('Error writing to Redis:', error.message);
     throw error;
   }
 };
@@ -123,21 +126,24 @@ export default async function handler(req, res) {
     res.setHeader(key, value);
   });
 
-  const { method, url } = req;
+  const { method, url, query } = req;
   const path = url.split('?')[0];
+  
+  // Log the request for debugging
+  console.log(`${method} ${path}`, { query, body: req.body });
 
   try {
     // Route handling
     if (path === '/api/status') {
       const data = await readData();
-      const client = await getRedisClient();
+      const redisConfigured = !!process.env.REDIS_URL;
       
       return res.status(200).json({
         status: 'ok',
         timestamp: new Date().toISOString(),
         environment: process.env.VERCEL ? 'vercel' : 'local',
-        storage: client ? 'redis' : 'fallback',
-        redisAvailable: !!client,
+        storage: redisConfigured ? 'redis' : 'fallback',
+        redisAvailable: redisConfigured,
         redisUrl: process.env.REDIS_URL ? 'configured' : 'missing',
         dataStats: {
           events: data.events.length,
@@ -188,13 +194,35 @@ export default async function handler(req, res) {
     }
 
     if (path.startsWith('/api/events/')) {
-      const eventId = path.split('/')[3];
+      const pathParts = path.split('/');
+      let eventId = pathParts[pathParts.length - 1]; // Get the last part as event ID
+      
+      // Decode the URL-encoded event ID
+      try {
+        eventId = decodeURIComponent(eventId);
+      } catch (e) {
+        console.error('Failed to decode event ID:', eventId, e);
+      }
+      
+      console.log('Event ID extracted:', eventId, 'from path:', path, 'pathParts:', pathParts);
+      
+      if (!eventId || eventId === 'events') {
+        return res.status(400).json({ error: 'Event ID is required' });
+      }
+      
       const data = await readData();
 
       if (method === 'PUT') {
-        const eventIndex = data.events.findIndex(e => e.id === eventId);
+        console.log('Looking for event with ID:', eventId, 'in events:', data.events.map(e => ({ id: e.id, type: typeof e.id })));
+        
+        // Convert eventId to match the type of IDs in the data
+        const eventIndex = data.events.findIndex(e => String(e.id) === String(eventId));
         if (eventIndex === -1) {
-          return res.status(404).json({ error: 'Event not found' });
+          return res.status(404).json({ 
+            error: 'Event not found', 
+            eventId: eventId,
+            availableIds: data.events.map(e => e.id)
+          });
         }
 
         data.events[eventIndex] = { ...data.events[eventIndex], ...req.body };
@@ -203,9 +231,16 @@ export default async function handler(req, res) {
       }
 
       if (method === 'DELETE') {
-        const eventIndex = data.events.findIndex(e => e.id === eventId);
+        console.log('Looking for event to delete with ID:', eventId, 'in events:', data.events.map(e => ({ id: e.id, type: typeof e.id })));
+        
+        // Convert eventId to match the type of IDs in the data
+        const eventIndex = data.events.findIndex(e => String(e.id) === String(eventId));
         if (eventIndex === -1) {
-          return res.status(404).json({ error: 'Event not found' });
+          return res.status(404).json({ 
+            error: 'Event not found', 
+            eventId: eventId,
+            availableIds: data.events.map(e => e.id)
+          });
         }
 
         data.events.splice(eventIndex, 1);
@@ -294,13 +329,35 @@ export default async function handler(req, res) {
     }
 
     if (path.startsWith('/api/finished/')) {
-      const eventId = path.split('/')[3];
+      const pathParts = path.split('/');
+      let eventId = pathParts[pathParts.length - 1]; // Get the last part as event ID
+      
+      // Decode the URL-encoded event ID
+      try {
+        eventId = decodeURIComponent(eventId);
+      } catch (e) {
+        console.error('Failed to decode finished event ID:', eventId, e);
+      }
+      
+      console.log('Finished Event ID extracted:', eventId, 'from path:', path, 'pathParts:', pathParts);
+      
+      if (!eventId || eventId === 'finished') {
+        return res.status(400).json({ error: 'Finished event ID is required' });
+      }
+      
       const data = await readData();
 
       if (method === 'DELETE') {
-        const eventIndex = data.finishedEvents.findIndex(e => e.id === eventId);
+        console.log('Looking for finished event to delete with ID:', eventId, 'in finished events:', data.finishedEvents.map(e => ({ id: e.id, type: typeof e.id })));
+        
+        // Convert eventId to match the type of IDs in the data
+        const eventIndex = data.finishedEvents.findIndex(e => String(e.id) === String(eventId));
         if (eventIndex === -1) {
-          return res.status(404).json({ error: 'Finished event not found' });
+          return res.status(404).json({ 
+            error: 'Finished event not found', 
+            eventId: eventId,
+            availableIds: data.finishedEvents.map(e => e.id)
+          });
         }
 
         data.finishedEvents.splice(eventIndex, 1);
@@ -312,11 +369,19 @@ export default async function handler(req, res) {
     if (path === '/api/restore') {
       if (method === 'POST') {
         const { id } = req.body;
+        console.log('Restore request for ID:', id, 'type:', typeof id);
+        
         const data = await readData();
+        console.log('Looking for finished event to restore with ID:', id, 'in finished events:', data.finishedEvents.map(e => ({ id: e.id, type: typeof e.id })));
 
-        const eventIndex = data.finishedEvents.findIndex(e => e.id === id);
+        // Convert id to match the type of IDs in the data
+        const eventIndex = data.finishedEvents.findIndex(e => String(e.id) === String(id));
         if (eventIndex === -1) {
-          return res.status(404).json({ error: 'Finished event not found' });
+          return res.status(404).json({ 
+            error: 'Finished event not found', 
+            requestedId: id,
+            availableIds: data.finishedEvents.map(e => e.id)
+          });
         }
 
         const eventToRestore = data.finishedEvents.splice(eventIndex, 1)[0];

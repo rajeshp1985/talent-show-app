@@ -211,6 +211,8 @@ class TalentShowDataService {
      * Update event
      */
     async updateEvent(eventId, eventData) {
+        console.log('🔄 DataService.updateEvent called with:', { eventId, eventData, type: typeof eventId });
+        
         if (this.useLocalStorage) {
             const data = await this.getAllData();
             const events = data.events || data.items || [];
@@ -228,7 +230,14 @@ class TalentShowDataService {
         }
 
         try {
-            const response = await fetch(`${this.apiBaseUrl}/events/${eventId}`, {
+            // Ensure eventId is properly encoded for URL
+            const encodedEventId = encodeURIComponent(String(eventId));
+            const url = `${this.apiBaseUrl}/events/${encodedEventId}`;
+            
+            console.log('🌐 Making PUT request to:', url);
+            console.log('📦 Request body:', JSON.stringify(eventData, null, 2));
+            
+            const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -236,14 +245,26 @@ class TalentShowDataService {
                 body: JSON.stringify(eventData)
             });
             
+            console.log('📡 Response status:', response.status);
+            
             if (!response.ok) {
-                const error = await response.json();
+                const errorText = await response.text();
+                console.error('❌ API Error Response:', errorText);
+                
+                let error;
+                try {
+                    error = JSON.parse(errorText);
+                } catch (e) {
+                    error = { error: errorText };
+                }
                 throw new Error(error.error || 'Failed to update event');
             }
             
-            return await response.json();
+            const result = await response.json();
+            console.log('✅ Update successful:', result);
+            return result;
         } catch (error) {
-            console.error('API call failed:', error);
+            console.error('❌ API call failed:', error);
             this.useLocalStorage = true;
             return this.updateEvent(eventId, eventData);
         }
@@ -544,7 +565,7 @@ class TalentShowDataService {
         }
 
         try {
-            const response = await fetch(`${this.apiBaseUrl}/move-event`, {
+            const response = await fetch(`${this.apiBaseUrl}/move`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

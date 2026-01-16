@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talent Show - Live Display</title>
+    <title>Talent Show - Preview Mode</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Poppins:wght@300;400;500;600;700;800&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Bright & Vibrant Event Theme */
@@ -107,7 +107,7 @@
         
         header h1 {
             font-family: 'Fredoka One', cursive;
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 400;
             background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
             background-size: 300% 300%;
@@ -128,20 +128,20 @@
         header h1::before {
             content: '🎪';
             position: absolute;
-            left: -80px;
+            left: -60px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 3rem;
+            font-size: 2.5rem;
             animation: bounce 2s ease-in-out infinite;
         }
 
         header h1::after {
             content: '🎭';
             position: absolute;
-            right: -80px;
+            right: -60px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 3rem;
+            font-size: 2.5rem;
             animation: bounce 2s ease-in-out infinite 1s;
         }
 
@@ -154,7 +154,7 @@
             display: flex;
             flex-direction: row;
             padding: 1rem;
-            height: calc(100vh - 2rem);
+            height: calc(100vh - 8rem);
             max-width: 100%;
             margin: 0;
             gap: 1rem;
@@ -324,60 +324,6 @@
             font-weight: 700;
         }
         
-        /* Compact upcoming events - no scroll */
-        .upcoming-events-projection {
-            height: 8vh;
-            overflow: hidden;
-            padding: 0.5rem 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .projection-upcoming-item {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
-            border: 2px solid rgba(214, 48, 49, 0.5);
-            border-radius: 15px;
-            padding: 0.75rem 1rem;
-            margin-bottom: 0;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            position: relative;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .projection-upcoming-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 6px;
-            background: linear-gradient(180deg, #ff6b6b, #feca57, #48dbfb);
-            border-radius: 25px 0 0 25px;
-        }
-
-        .projection-upcoming-item:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 45px rgba(255, 107, 107, 0.25);
-            border-color: rgba(255, 107, 107, 0.5);
-        }
-        
-        .projection-upcoming-item h4 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin: 0;
-            background: linear-gradient(45deg, #2c2c54, #40407a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
         /* Bright announcement styles */
         .projection-announcement-banner {
             background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
@@ -429,31 +375,6 @@
         @keyframes iconBounce {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
-        }
-        
-        .projection-upcoming-announcement {
-            background: linear-gradient(135deg, rgba(254, 202, 87, 0.2) 0%, rgba(255, 159, 243, 0.2) 100%);
-            border: 2px solid rgba(254, 202, 87, 0.4);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            position: relative;
-            backdrop-filter: blur(10px);
-        }
-        
-        .projection-upcoming-announcement .announcement-text {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.2rem;
-            color: #2c2c54;
-            line-height: 1.4;
-            font-weight: 600;
-        }
-        
-        .projection-upcoming-announcement .announcement-icon {
-            font-size: 1.8rem;
-            margin-bottom: 0.75rem;
-            display: block;
         }
         
         /* Photo section styling */
@@ -557,7 +478,7 @@
             100% { transform: rotate(360deg); border-top-color: #ff6b6b; }
         }
 
-        /* Live status indicator */
+        /* Preview status indicator */
         .status-indicator {
             position: fixed;
             top: 24px;
@@ -565,15 +486,85 @@
             width: 15px;
             height: 15px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #10b981, #06d6a0);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
-            animation: liveStatusPulse 1.5s ease-in-out infinite;
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+            box-shadow: 0 0 20px rgba(254, 202, 87, 0.6);
+            animation: previewStatusPulse 1.5s ease-in-out infinite;
             z-index: 1000;
         }
 
-        @keyframes liveStatusPulse {
+        @keyframes previewStatusPulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        /* Navigation Controls */
+        .preview-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 15px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            border: 3px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .preview-controls button {
+            background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .preview-controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .preview-controls button:disabled {
+            background: linear-gradient(135deg, #ccc, #ddd);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .preview-controls .event-counter {
+            background: linear-gradient(135deg, #2c2c54, #40407a);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .preview-controls .back-btn {
+            background: linear-gradient(135deg, #48dbfb, #0984e3);
+            padding: 10px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .preview-controls .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 219, 251, 0.4);
         }
 
         /* Responsive design */
@@ -585,7 +576,7 @@
             }
             
             header h1 {
-                font-size: 3rem;
+                font-size: 2rem;
             }
 
             header h1::before,
@@ -605,16 +596,15 @@
                 font-size: 2rem;
             }
 
-            .event-photo-projection {
+            .preview-controls {
                 flex-direction: column;
-                gap: 1.5rem;
+                gap: 10px;
+                padding: 15px 20px;
             }
 
-            .event-photo-projection img {
-                max-width: 350px;
-                max-height: 240px;
-                width: auto;
-                height: auto;
+            .preview-controls button {
+                padding: 10px 15px;
+                font-size: 12px;
             }
         }
 
@@ -646,8 +636,12 @@
     </style>
 </head>
 <body>
-    <div class="status-indicator" title="🔴 LIVE - Talent Show in Progress!"></div>
+    <div class="status-indicator" title="🔍 PREVIEW MODE - Navigate through events"></div>
     
+    <header>
+        <h1>Preview Mode</h1>
+    </header>
+
     <main>
         <div class="projection-layout">
             <!-- Left Section - Photo (70%) -->
@@ -655,7 +649,7 @@
                 <div id="projectionPhoto">
                     <div class="projection-no-event">
                         <div class="loading-spinner"></div>
-                        <p>🎭 Getting Ready! 🎭</p>
+                        <p>🎭 Loading Preview! 🎭</p>
                     </div>
                 </div>
             </div>
@@ -664,20 +658,20 @@
             <div class="details-section">
                 <!-- Current Event Details (Top Half) -->
                 <div class="current-event-details">
-                    <h2 style="font-size: 3.4rem; font-weight: bold; margin-bottom: 1rem;">✨ Now on Stage ✨</h2>
+                    <h2 style="font-size: 3.4rem; font-weight: bold; margin-bottom: 1rem;">✨ Previewing ✨</h2>
                     <div id="projectionCurrentDetails" class="projection-event-card">
                         <div class="projection-no-event">
-                            <p>Loading current event...</p>
+                            <p>Loading preview...</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Upcoming Event Details (Bottom Half) -->
                 <div class="upcoming-event-details">
-                    <h2 style="font-size: 3.4rem; font-weight: bold; margin-bottom: 1rem;">🎪 Coming Up Next 🎪</h2>
+                    <h2 style="font-size: 3.4rem; font-weight: bold; margin-bottom: 1rem;">🎪 Next Up 🎪</h2>
                     <div id="projectionUpcomingDetails" class="projection-event-card">
                         <div class="projection-no-event">
-                            <p>Loading upcoming event...</p>
+                            <p>Loading next event...</p>
                         </div>
                     </div>
                 </div>
@@ -685,181 +679,230 @@
         </div>
     </main>
 
+    <!-- Navigation Controls -->
+    <div class="preview-controls">
+        <a href="index.html" class="back-btn">← Back to Main</a>
+        <button id="prevBtn">← Previous</button>
+        <div class="event-counter" id="eventCounter">Event 1 of 1</div>
+        <button id="nextBtn">Next →</button>
+    </div>
+
     <script>
-        async function loadAndDisplayData() {
-            const photoContainer = document.getElementById('projectionPhoto');
-            const currentDetailsContainer = document.getElementById('projectionCurrentDetails');
-            const upcomingDetailsContainer = document.getElementById('projectionUpcomingDetails');
-            
-            try {
-                console.log('Loading data from API...');
-                
-                const response = await fetch('/api/data');
-                if (!response.ok) {
-                    throw new Error(`API responded with status: ${response.status}`);
+        class PreviewManager {
+            constructor() {
+                this.events = [];
+                this.currentIndex = 0;
+                this.init();
+            }
+
+            async init() {
+                await this.loadEvents();
+                this.bindEvents();
+                this.displayCurrentEvent();
+            }
+
+            async loadEvents() {
+                try {
+                    console.log('Loading data from API...');
+                    
+                    const response = await fetch('/api/data');
+                    if (!response.ok) {
+                        throw new Error(`API responded with status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('Data loaded successfully:', data);
+                    
+                    // Get all events (including current event and upcoming events)
+                    this.events = [];
+                    
+                    // Add current event if it exists
+                    if (data.currentEvent) {
+                        this.events.push(data.currentEvent);
+                    }
+                    
+                    // Add upcoming events
+                    if (data.events && data.events.length > 0) {
+                        this.events.push(...data.events);
+                    }
+                    
+                    console.log('Total events for preview:', this.events.length);
+                    
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    this.events = [];
                 }
+            }
+
+            bindEvents() {
+                document.getElementById('prevBtn').addEventListener('click', () => this.previousEvent());
+                document.getElementById('nextBtn').addEventListener('click', () => this.nextEvent());
                 
-                const data = await response.json();
-                console.log('Data loaded successfully:', data);
-                
-                const events = data.events || [];
-                const currentEvent = data.currentEvent || null;
-                
-                // Render current event photo and details
-                if (!currentEvent) {
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') {
+                        this.previousEvent();
+                    } else if (e.key === 'ArrowRight') {
+                        this.nextEvent();
+                    }
+                });
+            }
+
+            previousEvent() {
+                if (this.events.length > 0) {
+                    this.currentIndex = (this.currentIndex - 1 + this.events.length) % this.events.length;
+                    this.displayCurrentEvent();
+                }
+            }
+
+            nextEvent() {
+                if (this.events.length > 0) {
+                    this.currentIndex = (this.currentIndex + 1) % this.events.length;
+                    this.displayCurrentEvent();
+                }
+            }
+
+            displayCurrentEvent() {
+                const photoContainer = document.getElementById('projectionPhoto');
+                const currentDetailsContainer = document.getElementById('projectionCurrentDetails');
+                const upcomingDetailsContainer = document.getElementById('projectionUpcomingDetails');
+                const eventCounter = document.getElementById('eventCounter');
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+
+                // Update counter and button states
+                if (this.events.length === 0) {
+                    eventCounter.textContent = 'No Events';
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                } else {
+                    eventCounter.textContent = `Event ${this.currentIndex + 1} of ${this.events.length}`;
+                    prevBtn.disabled = false;
+                    nextBtn.disabled = false;
+                }
+
+                // Display current event
+                if (this.events.length === 0) {
                     photoContainer.innerHTML = `
                         <div class="projection-no-event fade-in">
-                            <div class="loading-spinner"></div>
-                            <p>🎭 The stage awaits! 🎭</p>
+                            <p>🎭 No events to preview 🎭</p>
                         </div>
                     `;
                     currentDetailsContainer.innerHTML = `
                         <div class="projection-no-event">
-                            <p>🎭 Getting Ready! 🎭</p>
-                        </div>
-                    `;
-                } else if (currentEvent.type === 'announcement') {
-                    photoContainer.innerHTML = `
-                        <div class="projection-announcement-banner fade-in">                            
-                            <div class="announcement-text">${escapeHtml(currentEvent.description)}</div>
-                        </div>
-                    `;
-                    currentDetailsContainer.innerHTML = `
-                        <div class="fade-in">
-                            <h3>📢 Announcement</h3>
+                            <p>🎭 No events available 🎭</p>
                         </div>
                     `;
                 } else {
-                    const participants = currentEvent.participants || [];
-                    const participantsText = participants.length > 0 ? participants.join(', ') : 'Amazing Performer';
+                    const currentEvent = this.events[this.currentIndex];
                     
-                    // Enhanced image path handling with debugging
-                    let imageSrc = getDefaultAvatar();
-                    let debugInfo = 'Using default avatar';
-                    
-                    if (currentEvent.photo) {
-                        let photoPath = currentEvent.photo.trim();
-                        console.log('Original photo path:', photoPath);
-                        
-                        if (photoPath) {
-                            // Handle different image path formats
-                            if (photoPath.startsWith('http') || photoPath.startsWith('https')) {
-                                // Absolute URL - use as is
-                                imageSrc = photoPath;
-                                debugInfo = `Using absolute URL: ${photoPath}`;
-                            } else if (photoPath.startsWith('data:')) {
-                                // Data URL - use as is
-                                imageSrc = photoPath;
-                                debugInfo = `Using data URL`;
-                            } else if (photoPath.startsWith('/')) {
-                                // Already has leading slash
-                                imageSrc = photoPath;
-                                debugInfo = `Using absolute path: ${photoPath}`;
-                            } else {
-                                // Relative path - add leading slash
-                                imageSrc = '/' + photoPath;
-                                debugInfo = `Converted relative path "${photoPath}" to "${imageSrc}"`;
-                            }
-                        }
-                    }
-                    
-                    console.log('Image debug:', debugInfo);
-                    console.log('Final image src:', imageSrc);
-                    
-                    // Display photo in left section
-                    photoContainer.innerHTML = `
-                        <img src="${imageSrc}" alt="${escapeHtml(participantsText)}" class="fade-in"
-                            onload="console.log('✅ Image loaded successfully:', '${imageSrc}')" 
-                            onerror="console.log('❌ Image failed to load:', '${imageSrc}'); this.src='${getDefaultAvatar()}';">
-                    `;
-
-                    // Display details in right section
-                    const showFeaturing = participantsText !== '+';
-                    const featuringHtml = showFeaturing ? `<div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(participantsText)}</div>` : '';
-                    
-                    currentDetailsContainer.innerHTML = `
-                        <div class="fade-in">
-                            <h3>🎪 ${escapeHtml(currentEvent.name || 'Spectacular Performance')}</h3>
-                            ${featuringHtml}
-                        </div>
-                    `;
-                }
-                
-                // Filter upcoming events (exclude current event if it exists)
-                let upcomingEvents = events;
-                if (currentEvent) {
-                    upcomingEvents = events.filter(event => event.id !== currentEvent.id);
-                }
-                
-                // Render upcoming event details
-                if (upcomingEvents.length === 0) {
-                    upcomingDetailsContainer.innerHTML = `
-                        <div class="projection-no-event fade-in">
-                            <p>🎉 What a show! 🎉</p>
-                        </div>
-                    `;
-                } else {
-                    // Show only the first upcoming event
-                    const nextEvent = upcomingEvents[0];
-                    const nextParticipants = nextEvent.participants || [];
-                    const nextParticipantsText = nextParticipants.length > 0 ? nextParticipants.join(', ') : 'Amazing Performer';
-                    
-                    if (nextEvent.type === 'announcement') {
-                        upcomingDetailsContainer.innerHTML = `
+                    if (currentEvent.type === 'announcement') {
+                        photoContainer.innerHTML = `
+                            <div class="projection-announcement-banner fade-in">                            
+                                <div class="announcement-text">${this.escapeHtml(currentEvent.description)}</div>
+                            </div>
+                        `;
+                        currentDetailsContainer.innerHTML = `
                             <div class="fade-in">
                                 <h3>📢 Announcement</h3>
                             </div>
                         `;
                     } else {
+                        const participants = currentEvent.participants || [];
+                        const participantsText = participants.length > 0 ? participants.join(', ') : 'Amazing Performer';
+                        
+                        // Enhanced image path handling
+                        let imageSrc = this.getDefaultAvatar();
+                        
+                        if (currentEvent.photo) {
+                            let photoPath = currentEvent.photo.trim();
+                            
+                            if (photoPath) {
+                                // Handle different image path formats
+                                if (photoPath.startsWith('http') || photoPath.startsWith('https')) {
+                                    // Absolute URL - use as is
+                                    imageSrc = photoPath;
+                                } else if (photoPath.startsWith('data:')) {
+                                    // Data URL - use as is
+                                    imageSrc = photoPath;
+                                } else if (photoPath.startsWith('/')) {
+                                    // Already has leading slash
+                                    imageSrc = photoPath;
+                                } else {
+                                    // Relative path - add leading slash
+                                    imageSrc = '/' + photoPath;
+                                }
+                            }
+                        }
+                        
+                        // Display photo in left section
+                        photoContainer.innerHTML = `
+                            <img src="${imageSrc}" alt="${this.escapeHtml(participantsText)}" class="fade-in"
+                                onload="console.log('✅ Image loaded successfully:', '${imageSrc}')" 
+                                onerror="console.log('❌ Image failed to load:', '${imageSrc}'); this.src='${this.getDefaultAvatar()}';">
+                        `;
+
+                        // Display details in right section
+                        const showFeaturing = participantsText !== '+';
+                        const featuringHtml = showFeaturing ? `<div class="participants"><strong>⭐ Featuring:</strong> ${this.escapeHtml(participantsText)}</div>` : '';
+                        
+                        currentDetailsContainer.innerHTML = `
+                            <div class="fade-in">
+                                <h3>🎪 ${this.escapeHtml(currentEvent.name || 'Spectacular Performance')}</h3>
+                                ${featuringHtml}
+                            </div>
+                        `;
+                    }
+                }
+
+                // Display next event
+                if (this.events.length <= 1) {
+                    upcomingDetailsContainer.innerHTML = `
+                        <div class="projection-no-event fade-in">
+                            <p>🎉 End of events! 🎉</p>
+                        </div>
+                    `;
+                } else {
+                    // Show the next event in the sequence
+                    const nextIndex = (this.currentIndex + 1) % this.events.length;
+                    const nextEvent = this.events[nextIndex];
+                    
+                    if (nextEvent.type === 'announcement') {
+                        upcomingDetailsContainer.innerHTML = `
+                            <div class="fade-in">
+                                <h3>📢 Next: Announcement</h3>
+                            </div>
+                        `;
+                    } else {
+                        const nextParticipants = nextEvent.participants || [];
+                        const nextParticipantsText = nextParticipants.length > 0 ? nextParticipants.join(', ') : 'Amazing Performer';
                         const showNextFeaturing = nextParticipantsText !== '+';
-                        const nextFeaturingHtml = showNextFeaturing ? `<div class="participants"><strong>⭐ Featuring:</strong> ${escapeHtml(nextParticipantsText)}</div>` : '';
+                        const nextFeaturingHtml = showNextFeaturing ? `<div class="participants"><strong>⭐ Featuring:</strong> ${this.escapeHtml(nextParticipantsText)}</div>` : '';
                         
                         upcomingDetailsContainer.innerHTML = `
                             <div class="fade-in">
-                                <h3>🎭 ${escapeHtml(nextEvent.name || 'Spectacular Act')}</h3>
+                                <h3>🎭 ${this.escapeHtml(nextEvent.name || 'Spectacular Act')}</h3>
                                 ${nextFeaturingHtml}
                             </div>
                         `;
                     }
                 }
-                
-            } catch (error) {
-                console.error('Error loading data:', error);
-                photoContainer.innerHTML = `
-                    <div class="projection-no-event">
-                        <div class="loading-spinner"></div>
-                        <p>🎭 Connection Error 🎭</p>
-                    </div>
-                `;
-                
-                currentDetailsContainer.innerHTML = `
-                    <div class="projection-no-event">
-                        <p>🎭 Oops! Something went wrong 🎭</p>
-                    </div>
-                `;
-                
-                upcomingDetailsContainer.innerHTML = `
-                    <div class="projection-no-event">
-                        <p>🌈 Unable to load upcoming acts 🌈</p>
-                    </div>
-                `;
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            getDefaultAvatar() {
+                return "data:image/svg+xml,%3Csvg width='160' height='160' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='brightDefaultBg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ff6b6b;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%23feca57;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2348dbfb;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='160' height='160' fill='url(%23brightDefaultBg)'/%3E%3Ccircle cx='80' cy='60' r='25' fill='white' opacity='0.9'/%3E%3Cellipse cx='80' cy='120' rx='35' ry='45' fill='white' opacity='0.9'/%3E%3Ctext x='80' y='140' font-family='Arial, sans-serif' font-size='20' fill='white' text-anchor='middle'%3E🎭%3C/text%3E%3C/svg%3E";
             }
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function getDefaultAvatar() {
-            return "data:image/svg+xml,%3Csvg width='160' height='160' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='brightDefaultBg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ff6b6b;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%23feca57;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2348dbfb;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='160' height='160' fill='url(%23brightDefaultBg)'/%3E%3Ccircle cx='80' cy='60' r='25' fill='white' opacity='0.9'/%3E%3Cellipse cx='80' cy='120' rx='35' ry='45' fill='white' opacity='0.9'/%3E%3Ctext x='80' y='140' font-family='Arial, sans-serif' font-size='20' fill='white' text-anchor='middle'%3E🎭%3C/text%3E%3C/svg%3E";
-        }
-
-        // Load data on page load and refresh every 3 seconds
+        // Initialize the preview manager
         document.addEventListener('DOMContentLoaded', () => {
-            loadAndDisplayData();
-            setInterval(loadAndDisplayData, 3000);
+            new PreviewManager();
         });
     </script>
 </body>

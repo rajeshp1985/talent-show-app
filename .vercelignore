@@ -1,0 +1,19 @@
+node_modules
+.DS_Store
+*.log
+.env.local
+.env*.local
+public/data/events-data.json
+public/data/events-data-bk.json
+server.js
+README.md
+QUICKSTART.md
+DEPLOYMENT.md
+.github
+
+# Python files (not used)
+*.py
+requirements.txt
+pyproject.toml
+__pycache__
+*.pyc

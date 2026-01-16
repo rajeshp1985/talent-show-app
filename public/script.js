@@ -26,6 +26,7 @@ class TalentShowManager {
         // Navigation
         document.getElementById('homeBtn').addEventListener('click', () => this.showPage('home'));
         document.getElementById('manageBtn').addEventListener('click', () => this.showPage('manage'));
+        document.getElementById('previewBtn').addEventListener('click', () => this.openPreview());
         document.getElementById('projectionBtn').addEventListener('click', () => this.openProjection());
 
         // Home page buttons
@@ -188,6 +189,7 @@ class TalentShowManager {
 
     async updateItem(id, itemData) {
         const updatedItem = {
+            id: id, // Ensure the ID is included in the update
             type: itemData.type,
             description: itemData.description
         };
@@ -205,9 +207,11 @@ class TalentShowManager {
         }
 
         try {
+            console.log('Updating item with ID:', id, 'data:', updatedItem);
             await this.dataService.updateEvent(id, updatedItem);
             await this.loadEvents(); // Refresh local data
         } catch (error) {
+            console.error('Update failed:', error);
             throw error;
         }
     }
@@ -282,6 +286,11 @@ class TalentShowManager {
     // Projection functionality
     openProjection() {
         window.open('projection.html', '_blank', 'fullscreen=yes,scrollbars=no,menubar=no,toolbar=no,location=no,status=no');
+    }
+
+    // Preview functionality
+    openPreview() {
+        window.open('preview.html', '_blank', 'width=1200,height=800,scrollbars=no,menubar=no,toolbar=no,location=no,status=no');
     }
 
     // Finished items management
@@ -728,6 +737,63 @@ class TalentShowManager {
         // Store reference and add the event listener
         fileInput._uploadHandler = handleFileUpload;
         fileInput.addEventListener('change', handleFileUpload);
+        
+        // Add URL validation and preview
+        urlInput.addEventListener('blur', (e) => {
+            const url = e.target.value.trim();
+            const helpText = urlInput.parentElement.querySelector('.form-help');
+            
+            if (url) {
+                // Auto-convert Imgur gallery URLs to direct image URLs
+                if (url.includes('imgur.com/') && !url.includes('i.imgur.com')) {
+                    // Extract image ID from various Imgur URL formats
+                    let imageId = null;
+                    
+                    // Format: https://imgur.com/gallery/title-8eCzGOC
+                    // Format: https://imgur.com/8eCzGOC
+                    // Format: https://imgur.com/a/8eCzGOC
+                    const patterns = [
+                        /imgur\.com\/gallery\/.*-([a-zA-Z0-9]+)$/,  // Gallery with title
+                        /imgur\.com\/a\/([a-zA-Z0-9]+)/,            // Album
+                        /imgur\.com\/([a-zA-Z0-9]+)$/                // Direct ID
+                    ];
+                    
+                    for (const pattern of patterns) {
+                        const match = url.match(pattern);
+                        if (match) {
+                            imageId = match[1];
+                            break;
+                        }
+                    }
+                    
+                    if (imageId) {
+                        // Convert to direct image URL (try .jpg first, most common)
+                        const directUrl = `https://i.imgur.com/${imageId}.jpg`;
+                        urlInput.value = directUrl;
+                        helpText.innerHTML = `✅ Converted Imgur gallery URL to direct image link: ${imageId}.jpg<br>If image doesn't load, try changing .jpg to .png or .gif`;
+                        helpText.style.color = '#28a745';
+                        return;
+                    }
+                }
+                
+                // Validate if it's an image URL
+                if (url.startsWith('http://') || url.startsWith('https://')) {
+                    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+                    const isImageUrl = imageExtensions.some(ext => url.toLowerCase().includes(ext)) || 
+                                       url.includes('i.imgur.com') || 
+                                       url.includes('googleusercontent.com') ||
+                                       url.includes('i.redd.it');
+                    
+                    if (isImageUrl) {
+                        helpText.innerHTML = `✅ Image URL detected. Preview will show in event card.`;
+                        helpText.style.color = '#28a745';
+                    } else {
+                        helpText.innerHTML = `⚠️ URL doesn't appear to be a direct image link. Make sure it ends with .jpg, .png, etc.`;
+                        helpText.style.color = '#ff9800';
+                    }
+                }
+            }
+        });
         
         console.log('✅ File upload handler attached successfully');
     }
